@@ -1,0 +1,135 @@
+.site-footer {
+    padding-top: 100px;
+    background-color: #282828;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+.site-footer__container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.site-footer__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.site-footer__social {
+    flex: 1 1 33.33%;
+    min-width: 200px;
+}
+
+.site-footer__social-icon {
+    margin: 0 10px;
+    display: inline-block;
+    color: #fff;
+    text-decoration: none;
+    font-size: 20px;
+    transition: color 0.3s;
+}
+
+.site-footer__social-icon:hover {
+    color: #ff9801;
+}
+
+.site-footer__logo {
+    flex: 1 1 33.33%;
+    text-align: center;
+    min-width: 200px;
+}
+
+.site-footer__logo img {
+    width: 120px;
+}
+
+.site-footer__payment-list {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    flex: 1 1 33.33%;
+    justify-content: flex-end;
+    min-width: 200px;
+}
+
+.site-footer__payment-item {
+    margin-left: 20px;
+}
+
+.site-footer__payment-item img {
+    width: 50px;
+}
+
+.site-footer__nav-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.site-footer__nav-link {
+    text-transform: capitalize;
+    color: #fff;
+    text-decoration: none;
+    margin: 5px 10px;
+    transition: all 0.4s;
+}
+
+.site-footer__nav-link:hover {
+    color: #ff9801;
+}
+
+.site-footer__copyright p {
+    opacity: 0.7;
+    padding-bottom: 70px;
+    padding-top: 20px;
+    margin: 0;
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+   .site-footer__payment-item img {
+        width: 40px;
+    }
+}
+
+@media (max-width: 767px) {
+   .site-footer__top {
+        justify-content: center;
+    }
+   .site-footer__logo {
+        order: -1; /* Move logo to the top on mobile */
+        flex-basis: 100%;
+        margin-bottom: 30px;
+    }
+   .site-footer__social,
+   .site-footer__payment-list {
+        flex-basis: 50%;
+        justify-content: center;
+        text-align: center;
+    }
+   .site-footer {
+        padding-top: 50px;
+    }
+   .site-footer__copyright p {
+        padding-bottom: 50px;
+    }
+}
+
+@media (max-width: 576px) {
+   .site-footer__social,
+   .site-footer__payment-list {
+        flex-basis: 100%;
+        margin-bottom: 30px;
+    }
+}

@@ -1,0 +1,123 @@
+/* --- Testimonial Section Styles --- */
+.testimonial-section {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+}
+
+.testimonial-section__container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.testimonial-section__heading {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 50px 0;
+}
+
+/* --- Testimonial Slider Block --- */
+.testimonial-slider__item {
+    border-right: 4px solid #2a3d7d;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px 30px 30px 130px;
+    margin: 0 15px 30px 15px;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
+    min-height: 220px;
+}
+
+.testimonial-slider__item:before {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: -17px;
+    border-top: 25px solid #29d18b;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    transform: rotate(45deg);
+}
+
+.testimonial-slider__item:after {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -17px;
+    border-top: 25px solid #29d18b;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    transform: rotate(135deg);
+}
+
+.testimonial-slider__pic {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: absolute;
+    top: 60px;
+    left: 20px;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.testimonial-slider__pic img {
+    width: 100%;
+    height: auto;
+}
+
+.testimonial-slider__text {
+    font-size: 1rem;
+    font-style: italic;
+    color: #6f6f6f;
+    line-height: 1.6;
+    margin: 0 0 15px 0;
+}
+
+.testimonial-slider__title {
+    display: inline-block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #29d18b;
+    margin: 0;
+}
+
+.testimonial-slider__post {
+    display: inline-block;
+    font-size: 0.9rem;
+    color: #555;
+    margin-left: 5px;
+}
+
+/* --- Owl Carousel Theme Styles (Required) --- */
+/* These are the styles for the dots/pagination */
+.owl-theme.owl-controls {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.owl-theme.owl-controls.owl-page {
+    display: inline-block;
+    zoom: 1;
+}
+
+.owl-theme.owl-controls.owl-page span {
+    display: block;
+    width: 12px;
+    height: 12px;
+    margin: 5px 7px;
+    background: #d6d6d6;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.owl-theme.owl-controls.owl-page.active span,
+.owl-theme.owl-controls.clickable.owl-page:hover span {
+    background: #29d18b;
+}

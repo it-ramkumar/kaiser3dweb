@@ -1,0 +1,25 @@
+/* 
+  This file controls the "cascade" and imports all other CSS.
+  It should be the ONLY stylesheet linked in your index.html <head>.
+*/
+
+/* 1. Reset/Normalize (Load first to reset browser defaults) */
+/* (Download normalize.css from https://necolas.github.io/normalize.css/ and place it in /css) */
+@import 'normalize.css'; 
+
+/* 2. Framework (Core styles for body, typography, etc.) */
+/* (Create a 'framework.css' for base font sizes, body background, etc.) */
+@import 'framework.css';
+
+/* 3. Core Components (Navigation & Footer) */
+@import 'navigation.css';
+@import 'footer.css';
+
+/* 4. Page Section Components (Hero, Features, etc.) */
+@import 'hero.css';
+@import 'features.css';
+@import 'testimonials.css';
+@import 'pricing.css';
+
+/* 5. Utilities (Optional: for helper classes like.margin-top-large) */
+/* @import 'utilities.css'; */

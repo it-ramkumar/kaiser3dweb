@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kaiser3DWeb | Interactive 3D Websites & Product Configurators</title>
+    <meta name="description" content="Kaiser3DWeb builds high-performance 3D product configurators and immersive WebGL experiences that boost sales. Integrate with Shopify, see in AR, and increase conversions." />
+    <link rel="canonical" href="https://kaiser3dweb.com/">
+    <link rel="icon" type="image/png" href="./favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="manifest" href="./site.webmanifest">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" as="image" href="./7.png">
+    <link rel="preload" as="image" href="./8.png">
+    <link rel="preload" as="image" href="./9.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    </noscript>
+    
+    <style>
+        /* === New Color Palette Variables === */
+        :root {
+            /* Light theme */
+            --primary-color: #FFFFFF;         /* White page background */
+            --secondary-color: #F9FAFB;       /* Very light gray sections */
+            --input-bg-color: #F3F4F6;        /* Light gray inputs */
+            --accent-start: #2563EB;          /* Blue-600 */
+            --accent-end: #22D3EE;            /* Cyan-400 */
+            --accent-glow: rgba(37, 99, 235, 0.18);
+            --text-color: #111827;            /* Dark blue/gray text */
+            --text-muted-color: #4B5563;      /* Medium gray text */
+            --card-bg-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+            --border-color: rgba(17, 24, 39, 0.1); /* Light gray border */
+        }
+
+        body.dark-mode {
+            /* Dark theme */
+            --primary-color: #111827;         /* Dark blue/gray background */
+            --secondary-color: #2C3A47;       /* Slightly lighter dark gray */
+            --input-bg-color: #374151;        /* Medium dark gray */
+            --accent-start: #3B82F6;          /* Blue-500 */
+            --accent-end: #67E8F9;            /* Cyan-300 */
+            --accent-glow: rgba(59, 130, 246, 0.14);
+            --text-color: #F9FAFB;            /* Very light gray text */
+            --text-muted-color: #9CA3AF;      /* Lighter gray text */
+            --card-bg-color: rgba(31, 41, 55, 0.7); /* Transparent dark gray */
+            --border-color: rgba(249, 250, 251, 0.1); /* Light gray border */
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* UX: Smooth theme transition */
+        html { 
+            scroll-behavior: smooth;
+            transition: color-scheme 0.3s ease;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        /* Utility class to prevent scroll when mobile menu is open */
+        body.overflow-hidden {
+            overflow: hidden;
+        }
+
+        /* UX: Scroll Progress Bar */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+            width: 0;
+            z-index: 1001;
+            transition: width 0.9s ease-out;
+        }
+        
+        /* === START OF INTEGRATED HERO STYLES === */
+        #hero {
+            min-height: 92vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 110px;
+            padding-bottom: 60px;
+            overflow: hidden;
+        }
+
+        #hero .container {
+            display: block; 
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-inner {
+            display: grid;
+            grid-template-columns: 1fr 560px;
+            gap: 44px;
+            align-items: center;
+        }
+        
+        .fadeInUp {
+            z-index: 2;
+        }
+        
+        .hero-eyebrow {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(37, 99, 235, 0.05);
+            color: var(--accent-start);
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-size: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+         body.dark-mode .hero-eyebrow {
+             background: rgba(59, 130, 246, 0.08);
+             color: var(--accent-end);
+         }
+
+        h1.hero-title {
+            font-size: 3.2rem;
+            font-weight: 700;
+            line-height: 1.02;
+            margin: 18px 0 12px;
+            letter-spacing: -1px;
+            color: var(--text-color);
+        }
+
+        /* Code: Reusable utility class for accent text */
+        .accent-text {
+            background: linear-gradient(to right, var(--accent-start), var(--accent-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        h1.hero-title .accent {
+            text-shadow: 0 0 15px var(--accent-glow);
+            padding-right: 6px;
+        }
+
+        .hero-lead {
+            font-size: 1.05rem;
+            color: var(--text-muted-color);
+            max-width: 60ch;
+            margin-bottom: 20px;
+        }
+        
+        .hero-cta-row {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .hero-ghost {
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg-color);
+            color: var(--text-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .hero-ghost:hover {
+            border-color: var(--accent-start);
+            color: var(--accent-start);
+            background: var(--secondary-color);
+        }
+
+        /* Code: Reusable utility class for accent background */
+        .accent-bg {
+            background-image: linear-gradient(to right, var(--accent-start), var(--accent-end));
+        }
+        
+        /* Code: Moved inline styles to classes */
+        .hero-stat-row {
+            margin-top: 18px;
+            max-width: 680px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .hero-stat-item {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .hero-stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            box-shadow: var(--accent-glow);
+        }
+        .hero-stat-text {
+            font-size: 0.95rem;
+            color: var(--text-muted-color);
+        }
+        .hero-stat-text strong {
+            color: var(--text-color);
+        }
+        
+        /* === 2.5D IMAGE SLIDER CSS === */
+        #hero-3d-container {
+            width: 100%;
+            height: 440px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .image-slider-container {
+            position: relative;
+            width: 90%;
+            height: 90%;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            animation: hero-3d-spin 18s ease-in-out infinite;
+        }
+
+        .slider-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 16px;
+            opacity: 0;
+            animation-name: crossfade;
+            animation-iteration-count: infinite;
+            animation-duration: 9s; /* 3 images * 3s each */
+            filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.1));
+            background: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+        }
+        
+        body.dark-mode .slider-image {
+             filter: drop-shadow(0px 10px 20px rgba(0,0,0,0.2));
+        }
+
+        .slider-image:nth-child(1) { animation-delay: 0s; }
+        .slider-image:nth-child(2) { animation-delay: 3s; }
+        .slider-image:nth-child(3) { animation-delay: 6s; }
+
+        @keyframes hero-3d-spin {
+            0%   { transform: rotateX(10deg) rotateY(-15deg) rotateZ(5deg); }
+            50%  { transform: rotateX(5deg)  rotateY(15deg) rotateZ(-5deg); }
+            100% { transform: rotateX(10deg) rotateY(-15deg) rotateZ(5deg); }
+        }
+
+        @keyframes crossfade {
+            0%   { opacity: 0; }
+            11%  { opacity: 1; } /* Fade in (1s) */
+            33%  { opacity: 1; } /* Hold (2s) */
+            44%  { opacity: 0; } /* Fade out (1s) */
+            100% { opacity: 0; }
+        }
+        /* === END 2.5D SLIDER CSS === */
+        
+        /* === END OF INTEGRATED HERO STYLES === */
+
+
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; padding: 20px 0;
+            z-index: 1000; transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        header.scrolled {
+            background: rgba(255, 255, 255, 0.7); /* White glass */
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        body.dark-mode header.scrolled {
+            background: rgba(17, 24, 39, 0.7); /* Dark blue glass */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.6rem; font-weight: 700; color: var(--text-color); text-decoration: none; }
+        /* .logo span is now .accent-text */
+        
+        nav ul { display: flex; list-style: none; align-items: center; }
+        nav ul li { margin-left: 35px; display: flex; align-items: center; }
+        nav ul li a { color: var(--text-color); text-decoration: none; font-weight: 500; transition: color 0.3s ease; }
+        nav ul li a:hover { color: var(--accent-start); }
+
+        .cta-button {
+            /* .accent-bg is applied in HTML */
+            color: white;
+            padding: 12px 24px; border-radius: 8px; text-decoration: none;
+            font-weight: 600; transition: all 0.3s ease; box-shadow: 0 0 15px var(--accent-glow);
+             z-index: 10;
+        }
+        .cta-button:hover {
+            opacity: 0.9;
+            transform: translateY(-3px); box-shadow: 0 4px 20px var(--accent-glow);
+        }
+        
+        /* === UPDATED: Responsive Nav Logic === */
+        .nav-links-desktop { display: flex; }
+        .hamburger { display: none; }
+        /* === END UPDATED === */
+
+        /* UX: Animated Hamburger Menu */
+        .hamburger { 
+            /* display: none; */ /* MODIFIED: Now controlled by media query */
+            cursor: pointer;
+            width: 25px;
+            height: 21px;
+            position: relative;
+            background: none;
+            border: none;
+            z-index: 1005; /* --- ADDED: Ensure hamburger is above menu overlay --- */
+        }
+        .hamburger .bar { 
+            width: 100%; 
+            height: 3px; 
+            background-color: var(--text-color); 
+            margin: 4px 0; 
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            position: absolute;
+            left: 0;
+        }
+        .hamburger .bar:nth-child(1) { top: 0; }
+        .hamburger .bar:nth-child(2) { top: 8px; }
+        .hamburger .bar:nth-child(3) { top: 16px; }
+
+        .hamburger.is-active .bar:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        .hamburger.is-active .bar:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.is-active .bar:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+        /* End Hamburger */
+        
+        /* --- NEW: "App-Like" Mobile Menu Overlay --- */
+        /* --- NEW: "App-Like" Mobile Menu Overlay --- */
+.nav-links-mobile {
+   position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* MODIFIED: Changed height from 100% to 100vh for a true fullscreen basis */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* MODIFIED: Changed 'justify-content: center' to 'flex-start' 
+       to prevent menu items from being clipped by the fixed header */
+    justify-content: flex-start;
+    background: var(--primary-color);
+    /* --- MODIFIED: This is the main fix. --- */
+    /* --- Puts menu on top of all page content (z-index: 1000) --- */
+    z-index: 1001; 
+    transform: translateX(-100%);
+    transition: transform 0.4s ease-in-out;
+    padding: 2rem;
+    /* ADDED: Crucial for accurate height/padding calculations */
+    box-sizing: border-box; 
+}
+/* ... keep .nav-links-mobile.is-active styles as they are ... */
+        .nav-links-mobile.is-active {
+            transform: translateX(0);
+        }
+        .nav-links-mobile li {
+            margin: 1.5rem 0; /* More spacing */
+        }
+        .nav-links-mobile li a {
+            font-size: 1.5rem; /* Larger text */
+            font-weight: 600;
+        }
+        .nav-links-mobile .cta-button {
+            font-size: 1.25rem; /* Slightly smaller CTA */
+        }
+        /* --- END NEW --- */
+
+
+        #theme-toggle-btn {
+            background: transparent; border: 1px solid var(--border-color); color: var(--text-color);
+            width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; padding: 0; transition: all 0.3s ease;
+        }
+        #theme-toggle-btn:hover { border-color: var(--accent-start); color: var(--accent-start); }
+        #theme-toggle-btn svg, #theme-toggle-btn-mobile svg { width: 18px; height: 18px; }
+        
+        /* General rules for theme icons */
+        body.dark-mode .moon { display: none; }
+        body.dark-mode .sun { display: block; }
+        .sun { display: none; }
+        .moon { display: block; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        section {
+            padding: 100px 0;
+            transition: background-color 0.3s ease;
+            background-color: transparent;
+        }
+        section:nth-of-type(even) { background-color: var(--secondary-color); }
+        
+        .section-title { font-size: 2.8rem; text-align: center; margin-bottom: 1.5rem; color: var(--text-color); }
+        .section-subtitle { text-align: center; color: var(--text-muted-color); margin-bottom: 5rem; max-width: 700px; margin-left: auto; margin-right: auto; font-size: 1.1rem;}
+
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .info-card {
+            background: var(--card-bg-color); padding: 2rem; border-radius: 10px;
+            border: 1px solid var(--border-color); backdrop-filter: blur(5px);
+            display: flex; flex-direction: column;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+        }
+        body.dark-mode .info-card { box-shadow: none; }
+        .info-card .icon-placeholder { font-size: 2.5rem; color: var(--accent-start); margin-bottom: 1rem; }
+        
+        .icon-placeholder-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+.service-pane .service-video-container {
+    overflow: hidden; 
+    height: 18rem;
+    width: 100%;
+    border-radius: 0.5rem;
+    background-color: var(--secondary-color);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+body.dark-mode .service-pane .service-video-container {
+    background-color: var(--input-bg-color);
+}
+.service-pane-video {
+    width: 100%;
+    height: 100%; 
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+.service-pane .service-video-container:hover .service-pane-video {
+    transform: scale(1.05);
+}
+        .featured-img {
+            width: 100%;
+            height: 100%;
+            object-fit:contain;
+        }
+        .tech-logo-img {
+            height: 40px;
+            object-fit: contain;
+            margin: 0 auto;
+            filter: grayscale(1) opacity(0.6);
+            transition: filter 0.3s ease;
+        }
+        .tech-logo:hover .tech-logo-img {
+            filter: none;
+        }
+        .case-study-img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            border-radius: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .case-study-placeholder { height: 14rem; }
+        }
+        .footer-icon-img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            filter: grayscale(1) opacity(0.7);
+            transition: filter 0.3s ease;
+        }
+        .social-links a:hover .footer-icon-img {
+            filter: none;
+        }
+        .footer-links .footer-icon-img {
+            width: 20px;
+            height: 20px;
+            filter: grayscale(1) opacity(0.7);
+        }
+        .footer-links li a:hover .footer-icon-img {
+             filter: none;
+        }
+
+        .info-card h3 { font-size: 1.4rem; margin-bottom: 1rem; color: var(--text-color); }
+        .info-card p { color: var(--text-muted-color); flex-grow: 1; }
+
+        .process-timeline { display: flex; flex-direction: column; gap: 2rem; position: relative; max-width: 800px; margin: 0 auto; }
+        .process-timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: var(--border-color); }
+        .timeline-item { display: flex; align-items: flex-start; gap: 2rem; position: relative; padding-left: 50px; }
+        .timeline-dot {
+            position: absolute; left: 10px; top: 5px; width: 20px; height: 20px;
+            border-radius: 50%; background: var(--accent-start);
+            border: 3px solid var(--primary-color); transition: border-color 0.3s ease;
+        }
+        section:nth-of-type(even) .timeline-dot { border-color: var(--secondary-color); }
+        .timeline-content h3 { font-size: 1.5rem; color: var(--text-color); }
+        .timeline-content p { color: var(--text-muted-color); }
+
+        /* === NEW: Lightweight CSS-Sticky "Process" Section === */
+        #process-3d {
+            /* This section just provides the title and padding */
+            padding-top: 100px;
+            padding-bottom: 100px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .css-sticky-container {
+            /* This parent container is relative */
+            position: relative;
+        }
+
+        .process-step-sticky {
+            /* Each step is sticky */
+            position: sticky;
+            /* Stick 80px from the top (to clear your fixed header) */
+            top: 80px; 
+            
+            /* Give it a height and center the card */
+            min-height: 80vh; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            /* Add a simple fade-in animation */
+            animation: cssFadeIn 0.8s ease-out;
+        }
+
+        .process-3d-layer {
+            /* This is the card itself */
+            position: relative;
+            width: min(1000px, 90vw);
+            height: min(700px, 60vh);
+            margin: 0 auto; /* Center the card horizontally */
+
+            /* Use an OPAQUE background to hide the layer behind */
+            background: var(--primary-color); 
+            
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        body.dark-mode .process-3d-layer {
+             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        /* Keep the old image and text styles */
+        .process-3d-layer img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 16px;
+        }
+        .layer-text {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            background: linear-gradient(to right, var(--accent-start), var(--accent-end));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        /* Add the simple fade-in animation */
+        @keyframes cssFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* === END NEW CSS-Sticky Section === */
+
+        .tech-logos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2rem; }
+        .tech-logo {
+            background: var(--card-bg-color); padding: 1.5rem; border-radius: 10px;
+            border: 1px solid var(--border-color); text-align: center;
+            min-width: 150px; transition: all 0.3s ease;
+        }
+        .tech-logo:hover { transform: translateY(-5px); box-shadow: 0 5px 15px var(--accent-glow); }
+        .tech-logo span { font-weight: 500; }
+
+        .faq-item { background: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 1rem; overflow: hidden; transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .faq-question { padding: 1.5rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; font-size: 1.1rem; }
+        .faq-question::after { content: '+'; font-size: 1.5rem; transition: transform 0.3s ease; color: var(--accent-start); }
+        .faq-item.active .faq-question::after { transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out, padding 0.4s ease; color: var(--text-muted-color); }
+        .faq-answer p { padding: 0 1.5rem 1.5rem; }
+
+        .custom-form-container {
+            max-width: 700px; margin: 0 auto; background: var(--card-bg-color); padding: 2.5rem;
+            border-radius: 10px; border: 1px solid var(--border-color); backdrop-filter: blur(5px);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-muted-color); font-size: 0.9rem; }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 1rem; background-color: var(--input-bg-color);
+            border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color);
+            font-family: 'Poppins', sans-serif; font-size: 1rem; transition: all 0.3s ease;
+        }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--accent-start); box-shadow: 0 0 10px var(--accent-glow); }
+        .form-group textarea { resize: vertical; min-height: 120px; }
+        .submit-btn {
+            width: 100%; padding: 1rem; border: none; border-radius: 8px;
+            /* .accent-bg is applied in HTML */
+            color: white;
+            font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+        }
+        .submit-btn:hover { opacity: 0.9; transform: translateY(-3px); box-shadow: 0 4px 20px var(--accent-glow); }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(5px); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            background: var(--secondary-color); padding: 3rem; border-radius: 10px; border: 1px solid var(--border-color);
+            text-align: center; z-index: 2001; width: 90%; max-width: 450px; opacity: 0; pointer-events: none;
+            transition: all 0.3s ease-in-out;
+        }
+        .modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+        .modal-icon { color: var(--accent-start); font-size: 4rem; margin-bottom: 1rem; text-align: center; }
+        .modal h3 { font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-color); }
+        .modal p { color: var(--text-muted-color); margin-bottom: 2rem; }
+        .modal-close-btn { padding: 12px 30px; border: none; }
+
+        footer { padding-top: 80px; text-align: left; background: var(--primary-color); border-top: 1px solid var(--border-color); transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2.5rem; margin-bottom: 4rem; }
+        .footer-column .logo { margin-bottom: 1rem; display: inline-block; }
+        .footer-column p { color: var(--text-muted-color); font-size: 0.9rem; max-width: 250px; }
+        .footer-column h4 { font-size: 1.1rem; color: var(--text-color); margin-bottom: 1.5rem; font-weight: 600; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 0.8rem; }
+        .footer-links a { color: var(--text-muted-color); text-decoration: none; transition: color 0.3s ease; font-size: 0.95rem; }
+        .footer-links a:hover { color: var(--accent-start); }
+        .social-links { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .social-links a { color: var(--text-muted-color); text-decoration: none; transition: color 0.3s ease; }
+        .social-links a:hover { color: var(--accent-start); }
+        .social-links svg { width: 24px; height: 24px; }
+        .footer-bottom { border-top: 1px solid var(--border-color); padding: 2rem 0; text-align: center; font-size: 0.9rem; color: var(--text-muted-color); }
+
+        .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 400px; } }
+
+        .icon-placeholder { width: 80px; height: 80px; border-radius: 50%; background-color: rgba(37, 99, 235, 0.1); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 500; color: var(--accent-start); margin: 0 auto 1.5rem; border: 2px dashed rgba(37, 99, 235, 0.3); font-family: monospace; }
+        body.dark-mode .icon-placeholder { background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3);}
+        .tech-logo-placeholder { width: 100%; height: 80px; border-radius: 0.5rem; background-color: var(--input-bg-color); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 500; color: var(--text-muted-color); border: 1px solid var(--border-color); transition: all 0.3s ease; }
+        .tech-logo-placeholder:hover { border-color: var(--accent-start); color: var(--accent-start); box-shadow: 0 5px 15px var(--accent-glow); transform: translateY(-3px); }
+        .testimonial-card { background-color: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 2rem; text-align: center; margin-top: 1rem; backdrop-filter: blur(5px); }
+        .testimonial-avatar-placeholder { width: 72px; height: 72px; border-radius: 50%; background-color: var(--input-bg-color); border: 1px solid var(--border-color); margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 600; color: var(--text-muted-color); }
+img {
+    max-width: 100%;
+    height: auto;
+}
+        .featured-placeholder { width: 100%; height: auto; aspect-ratio: 16 / 9; background-color: var(--secondary-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 1rem; font-size: 1.5rem; font-weight: 600; border: 2px dashed var(--accent-start); text-align: center; padding: 2rem; }
+        .featured-placeholder video, .featured-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 1rem; /* Match parent */
+        }
+        .case-study-card { background-color: var(--card-bg-color); border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); transition: all 0.3s ease; backdrop-filter: blur(5px); }
+        .case-study-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-color: var(--accent-start); }
+        body.dark-mode .case-study-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .case-study-placeholder { width: 100%; height: 192px; background-color: var(--input-bg-color); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 500; color: var(--text-muted-color); border-bottom: 1px solid var(--border-color); }
+        .case-study-card .p-6 { padding: 1.5rem; }
+        .case-study-card h3 { font-size: 1.25rem; color: var(--text-color); font-weight: 600; margin: 0.5rem 0;}
+        .case-study-card p:first-of-type { color: var(--accent-start); }
+        .case-study-card p:last-of-type { color: var(--text-muted-color); }
+        .filter-btn { padding: 8px 20px; border-radius: 9999px; background-color: var(--input-bg-color); color: var(--text-muted-color); transition: all 0.3s ease; font-weight: 500; border: 1px solid var(--border-color); cursor: pointer; }
+        .filter-btn:hover { background-color: var(--secondary-color); color: var(--text-color); }
+        .filter-btn.active { 
+            /* .accent-bg is applied in HTML */
+            color: white; 
+            border-color: transparent; 
+        }
+        #service-tabs .service-tab { cursor: pointer; padding: 0.75rem 1rem; border-left: 4px solid transparent; color: var(--text-muted-color); transition: all 0.3s ease; }
+        #service-tabs .service-tab.active { border-left-color: var(--accent-start); color: var(--text-color); font-weight: 600; background-color: rgba(37, 99, 235, 0.05); }
+        body.dark-mode #service-tabs .service-tab.active { background-color: rgba(59, 130, 246, 0.08); }
+
+
+        @media (max-width: 1100px) {
+            .hero-inner { grid-template-columns: 1fr 420px; gap: 28px; }
+        }
+
+        @media (max-width: 992px) {
+            /* --- ADDED to hide desktop nav on tablet --- */
+            .nav-links-desktop { display: none; }
+            .hamburger { display: flex; }
+            /* --- END ADDED --- */
+
+            #hero .container { text-align: center; }
+            .hero-inner {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .fadeInUp {
+                order: 2;
+                max-width: 100%;
+                margin-bottom: 2rem;
+                padding: 1.5rem;
+            }
+            #hero-3d-container {
+                width: 100%;
+                max-width: 400px;
+                height: 320px;
+                order: 1;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            h1.hero-title { font-size: 2.8rem; }
+            .hero-cta-row {
+                justify-content: center;
+            }
+            .hero-stat-row {
+                justify-content: center;
+            }
+            .process-3d-layers {
+                width: 90vw;
+                height: 60vw;
+            }
+            .process-3d-sticky {
+                height: 70vw;
+            }
+            #process-3d {
+                min-height: 100vh;
+            }
+            .layer-text {
+                font-size: 1rem;
+                bottom: 1rem;
+                left: 1rem;
+            }
+
+            /* === MOVED: Service tabs are now horizontal on tablet === */
+            #service-tabs { display: flex; overflow-x: auto; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;}
+             #service-tabs .service-tab { border-left: none; border-bottom: 4px solid transparent; text-align: center; white-space: nowrap; flex-shrink: 0; }
+             #service-tabs .service-tab.active { border-bottom-color: var(--accent-start); border-left: none; background: none; }
+        }
+        
+        @media (max-width: 768px) {
+            /* === ADDED: Reduce vertical spacing on mobile === */
+            section {
+                padding: 60px 0;
+            }
+            /* Override for specific sections that need their own padding */
+            #hero {
+                padding-top: 110px;
+                padding-bottom: 60px;
+            }
+            #process-3d {
+                padding-top: 5vh;
+                padding-bottom: 5vh;
+            }
+            footer {
+                padding-top: 60px;
+            }
+            /* === END ADDED === */
+
+            h1.hero-title { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
+            
+            /* REMOVED: .hamburger and .nav-links rules are
+              now handled by the 992px breakpoint
+            */
+
+            .footer-grid { text-align: center; }
+            .footer-column p { margin: 0 auto; }
+            .social-links { justify-content: center; }
+            
+            /* --- ADDED: Center footer phone link --- */
+            .footer-links li a[href^="tel"] {
+                justify-content: center;
+            }
+
+            /* MOVED to 992px breakpoint */
+            /* #service-tabs { ... } */
+            
+            .service-pane,
+            .timeline-content,
+            .info-card,
+            .case-study-card .p-6 {
+                text-align: center;
+            }
+            .info-card .icon-placeholder {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        /* === NEW: Added for small mobile screens === */
+        @media (max-width: 480px) {
+            h1.hero-title {
+                font-size: 2.2rem;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+            .section-subtitle {
+                font-size: 1rem;
+                margin-bottom: 3rem;
+            }
+            #hero-3d-container {
+                height: 280px;
+            }
+            .nav-links-mobile li a {
+                font-size: 1.25rem; /* Smaller tap targets for small screens */
+            }
+            .cta-button {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+            /* Stack hero buttons */
+            .hero-cta-row .cta-button,
+            .hero-cta-row .hero-ghost {
+                width: 100%;
+                text-align: center;
+            }
+            .custom-form-container {
+                padding: 1.5rem;
+            }
+        }
+        /* === END NEW === */
+
+    </style>
+</head>
+<body class="antialiased"> 
+    
+    <div id="scroll-progress"></div>
+
+    <header id="main-header">
+        <nav class="container">
+            <a href="#hero" class="logo" style="display: flex; align-items: center; gap: 8px;">
+                <img src="./logo.png" style="height: 75px; width: auto;"/>
+                Kaiser<span class="accent-text">3DWeb</span>
+            </a>
+            
+            <div class="nav-links-desktop"> <ul>
+            <li><a href="#services">Services</a></li>
+                    <li><a href="#process">Process</a></li>
+                    <li><a href="#expertise">Expertise</a></li>
+                    <li><a href="#work">Our Work</a></li>
+                    <li><a href="#insights">Insights</a></li>
+                    <li><a href="#faq">FAQs</a></li>
+                    <li><a href="#contact" class="cta-button accent-bg">Start Your Project</a></li>
+                    <li>
+                        <button id="theme-toggle-btn" aria-label="Toggle light/dark theme">
+                           <svg class="sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 18a6 6 0 100-12 6 6 0 000 12z"></path></svg>
+                           <svg class="moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <button class="hamburger" aria-label="Toggle mobile menu" aria-expanded="false">
+            <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </nav>
+        <ul class="nav-links-mobile">
+           <li><a href="#services">Services</a></li>
+           <li><a href="#process">Process</a></li>
+           <li><a href="#expertise">Expertise</a></li>
+           <li><a href="#work">Our Work</a></li>
+           <li><a href="#insights">Insights</a></li>
+           <li><a href="#faq">FAQs</a></li>
+           <li class="mt-4"><a href="#contact" class="cta-button accent-bg">Start Your Project</a></li>
+            <li class="mt-4">
+                <button id="theme-toggle-btn-mobile" aria-label="Toggle light/dark theme" class="w-10 h-10 rounded-full border border-[var(--border-color)] flex items-center justify-center">
+                    <svg class="sun w-5 h-5 text-[var(--text-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 18a6 6 0 100-12 6 6 0 000 12z"></path></svg>
+                    <svg class="moon w-5 h-5 text-[var(--text-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </li>
+        </ul>
+</header>
+<main>
+         <section id="hero" role="region" aria-labelledby="hero-title-h1">
+            <div class="container">
+              <div class="hero-inner">
+                <div class="fadeInUp">
+                  <div class="hero-eyebrow">IMMERSIVE 3D · WEB AR · CONFIGURATORS</div>
+                  <h1 class="hero-title" id="hero-title-h1">
+                    Turn Browsers into <span class="accent-text accent">Showrooms</span><br>
+                    — Sell With Spatial Confidence
+                  </h1>
+                  <p class="hero-lead">We craft cinematic, interactive 3D experiences that scale — from realtime product configurators to app-less WebAR. Fast prototypes, elegant UI, measurable ROI.</p>
+      
+                  <div class="hero-cta-row">
+                    <a class="cta-button accent-bg" href="#contact">Start Your Project</a>
+                    <a class="hero-ghost" href="#work">See Case Studies</a>
+                  </div>
+      
+                  <div class="hero-stat-row">
+                    <div class="hero-stat-item">
+                      <div class="hero-stat-icon accent-bg">★</div>
+                      <div class="hero-stat-text"><strong>Avg. 40%+</strong> conversion lift (measured)</div>
+                    </div>
+                  </div>
+                </div>
+      
+                <div id="hero-3d-container" role="img" aria-label="3D Product Renderings Slider" class="fadeInUp">
+                    <div class="image-slider-container">
+                        <img src="./7.png" alt="3D Render of a futuristic chair" class="slider-image">
+                        <img src="./8.png" alt="3D Render of a modern stove" class="slider-image">
+                        <img src="./9.png" alt="3D Render of a swivel seat" class="slider-image">
+                    </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="services" role="region" aria-labelledby="services-title">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="section-title" id="services-title">Our 3D Web Services</h2>
+                    <p class="section-subtitle">From configurators to virtual worlds, we build it all.</p>
+                </div>
+                <div class="flex flex-col md:flex-row -mx-4">
+                     <div class="w-full md:w-1/3 px-4 mb-8 md:mb-0">
+                        <ul id="service-tabs">
+                            <li class="service-tab active" data-tab="1">3D Product Configurators</li>
+                            <li class="service-tab" data-tab="2">Virtual Showrooms & Tours</li>
+                            <li class="service-tab" data-tab="3">Interactive WebGL Experiences</li>
+                            <li class="service-tab" data-tab="4">Web AR Integration</li>
+                        </ul>
+                    </div>
+                     
+                    <div class="w-full md:w-2/3 px-4">
+                        <div id="service-content">
+                            <div class="service-pane active" data-pane="1">
+                                <h3 class="text-2xl font-bold mb-4">3D Product Configurators</h3>
+                                <p class="mb-4">Empower your customers. We build lightning-fast 3D configurators that allow users to customize products in real-time, from colors and textures to accessories and features. Perfect for e-commerce, automotive, and fashion.</p>
+                                <div class="service-video-container">
+                                    <video class="service-pane-video"  loop muted playsinline poster="./11.png" loading="lazy">
+                                        <source src="./D_Product_Configurator_Video_Creation.mp4" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+                            
+                            <div class="service-pane hidden" data-pane="2">
+                                <h3 class="text-2xl font-bold mb-4">Virtual Showrooms & Tours</h3>
+                                <p class="mb-4">Create immersive digital spaces. We design and develop virtual showrooms, art galleries, and real estate tours that users can explore from any device. Engage clients with interactive, 24/7 accessible environments.</p>
+                                <div class="service-video-container">
+                                    <video class="service-pane-video"  loop muted playsinline poster="./25.png" loading="lazy">
+                                        <source src="./D_Virtual_Showroom_Video_Generated.mp4" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+
+                            <div class="service-pane hidden" data-pane="3">
+                                <h3 class="text-2xl font-bold mb-4">Interactive WebGL Experiences</h3>
+                                <p class="mb-4">Push the boundaries of branding. We create bespoke WebGL sites, data visualizations, and gamified experiences that tell your brand's story in a truly unforgettable way. If you can dream it, we can build it in the browser.</p>
+                                <div class="service-video-container">
+                                    <video class="service-pane-video"  loop muted playsinline poster="./9.png" loading="lazy">
+                                        <source src="./Creating_Interactive_D_WebGL_Video.mp4" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+
+                            <div class="service-pane hidden" data-pane="4">
+                                <h3 class="text-2xl font-bold mb-4">Web AR Integration</h3>
+                                <p class="mb-4">Bring your products into your customer's world. We integrate markerless Web AR, allowing users to place 3D models of your products in their own space using just their phone's camera—no app download required.</p>
+                                <div class="service-video-container">
+                                    <video class="service-pane-video"  loop muted playsinline poster="./22.png" loading="lazy">
+                                        <source src="./Web-AR-Integration.mp4" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="process" role="region" aria-labelledby="process-title">
+            <div class="container mx-auto px-6">
+                 <h2 class="section-title" id="process-title">Our Immersive Development Process</h2>
+                 <p class="section-subtitle">A streamlined workflow for creating world-class 3D web apps.</p>
+                <div class="process-timeline">
+                    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content">
+                        <h3>1. Discovery & 3D Strategy</h3>
+                        <p>We align on your KPIs, target audience, and technical needs to define a clear strategy for your 3D experience.</p>
+                    </div></div>
+                    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content">
+                        <h3>2. 3D Modeling & Asset Creation</h3>
+                        <p>Our artists create photorealistic, low-poly 3D models optimized for blazing-fast web performance.</p>
+                    </div></div>
+                    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content">
+                         <h3>3. Agile Development & Integration</h3>
+                        <p>Using Three.js and React Three Fiber, we build the interactive experience in sprints, integrating with your existing stack.</p>
+                    </div></div>
+                     <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content">
+                         <h3>4. Optimization & Launch</h3>
+                        <p>We obsess over performance, ensuring rapid load times and a smooth 60fps experience on all devices.</p>
+                    </div></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="expertise" role="region" aria-labelledby="expertise-title">
+             <div class="container mx-auto px-6">
+                <h2 class="section-title" id="expertise-title">Our Expertise</h2>
+                 <p class="section-subtitle">Why leading brands choose Kaiser3DWeb.</p>
+                 <div class="info-grid">
+                     <div class="info-card">
+                        <div class="icon-placeholder">
+                             <img src="./36.png" alt="Photorealistic Quality Icon" class="icon-placeholder-img" loading="lazy">
+                        </div>
+                        <h3>Photorealistic Quality</h3>
+                        <p>We combine advanced 3D artistry with cutting-edge shading techniques (PBR) to deliver visuals that are indistinguishable from reality.</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="icon-placeholder">
+                             <img src="./37.png" alt="Performance Optimization Icon" class="icon-placeholder-img" loading="lazy">
+                        </div>
+                        <h3>Performance Obsessed</h3>
+                        <p>A beautiful 3D site is useless if it's slow. We are experts in 3D asset optimization (Draco, GLTF) to ensure instant loads and smooth frame rates.</p>
+                    </div>
+                    <div class="info-card">
+                         <div class="icon-placeholder">
+                             <img src="./38.png" alt="Multi-platform Device Icon" class="icon-placeholder-img" loading="lazy">
+                         </div>
+                        <h3>Multi-platform Ready</h3>
+                        <p>Our experiences work flawlessly across all devices—from 4K desktops to mobile phones and even VR/AR headsets (WebXR).</p>
+                    </div>
+                 </div>
+            </div>
+        </section>
+
+        <section id="process-3d" role="region" aria-labelledby="process-3d-title">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="section-title" id="process-3d-title">From Concept to Reality</h2>
+                    <p class="section-subtitle">Our process is transparent. See how we bring your ideas to life through a 3D pipeline, from wireframe to final product.</p>
+                </div>
+            </div>
+<div class="css-sticky-container">
+                
+                <div class="process-step-sticky">
+                    <div class="process-3d-layer" id="layer-1">
+                        <img src="./7.png" alt="3D Wireframe Blueprint of a product">
+                        <div class="layer-text">STEP 1: BLUEPRINT & WIREFRAME</div>
+                    </div>
+                </div>
+
+                <div class="process-step-sticky">
+                    <div class="process-3d-layer" id="layer-2">
+                        <img src="./8.png" alt="High-fidelity 3D model render">
+                        <div class="layer-text">STEP 2: MODELING & TEXTURING</div>
+                    </div>
+                </div>
+
+                <div class="process-step-sticky">
+                    <div class="process-3d-layer" id="layer-3">
+                        <img src="./9.png" alt="Final 3D Product Configurator in a web browser">
+                        <div class="layer-text">STEP 3: FINAL WEB INTEGRATION</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <section id="tech-stack" role="region" aria-labelledby="tech-stack-title">
+             <div class="container mx-auto px-6">
+                 <h2 class="section-title" id="tech-stack-title">Our 3D Tech Stack</h2>
+                <p class="section-subtitle">We leverage the most advanced tools to build powerful solutions.</p>
+                <div class="tech-logos">
+                     <div class="tech-logo"><img src="./16.png" alt="React" class="tech-logo-img" loading="lazy"></div>
+                     <div class="tech-logo"><img src="./17.png" alt="Shopify" class="tech-logo-img" loading="lazy"></div>
+                     <div class="tech-logo"><img src="./12.png" alt="WooCommerce" class="tech-logo-img" loading="lazy"></div>
+                     <div class="tech-logo"><img src="./14.png" alt="Webflow" class="tech-logo-img" loading="lazy"></div>
+                     <div class="tech-logo"><img src="./15.png" alt="Vercel" class="tech-logo-img" loading="lazy"></div>
+                     <div class="tech-logo"><img src="./13.png" alt="WebGL" class="tech-logo-img" loading="lazy"></div>
+                </div>
+                </div>
+        </section>
+
+         <section id="impact-chart" role="region" aria-labelledby="impact-chart-title">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                     <h2 class="section-title" id="impact-chart-title">Measurable 3D Impact</h2>
+                    <p class="section-subtitle">Our experiences aren't just stunning. They deliver real metrics.</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="impactChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="featured-experience" role="region" aria-labelledby="featured-experience-title">
+             <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                     <h2 class="section-title" id="featured-experience-title">Featured 3D Experience</h2>
+                    <p class="section-subtitle">Interact with our latest creation live in your browser.</p>
+                 </div>
+                <div class="featured-placeholder">
+                    <video class="featured-video"  loop muted playsinline poster="./26.png" loading="lazy">
+                        <source src="./Product_Customizer.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </section>
+
+        <section id="work" role="region" aria-labelledby="work-title">
+             <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                     <h2 class="section-title" id="work-title">Explore Our Work</h2>
+                     <p class="section-subtitle">See how we've helped businesses like yours succeed.</p>
+                </div>
+                 <div class="flex flex-wrap justify-center space-x-2 md:space-x-4 mb-8" id="filter-buttons">
+                    <button class="filter-btn active accent-bg mb-2" data-filter="all">All</button>
+                    <button class="filter-btn mb-2" data-filter="ecommerce">E-commerce</button>
+                    <button class="filter-btn mb-2" data-filter="automotive">Automotive</button>
+                    <button class="filter-btn mb-2" data-filter="real-estate">Real Estate</button>
+                </div>
+                <div id="case-study-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="case-study-card" data-category="ecommerce">
+                        <div class="case-study-placeholder">
+                             <img src="./27.png" alt="Aura Home Sofa" class="case-study-img" loading="lazy">
+                        </div>
+                        <div class="p-6">
+                            <p class="text-sm font-semibold mb-1" style="color: var(--accent-start);">E-commerce</p>
+                            <h3>Aura Home Furniture Configurator</h3>
+                            <p>A real-time 3D configurator that led to a 40% increase in conversion rates and a 25% drop in returns.</p>
+                        </div>
+                    </div>
+                     <div class="case-study-card" data-category="automotive">
+                        <div class="case-study-placeholder">
+                             <img src="./2.png" alt="AutoVerse EV" class="case-study-img" loading="lazy">
+                        </div>
+                        <div class="p-6">
+                            <p class="text-sm font-semibold mb-1" style="color: var(--accent-start);">Automotive</p>
+                            <h3>AutoVerse EV Launchpad</h3>
+                            <p>An immersive WebGL experience to launch a new EV, driving 90% user engagement and 3x time-on-site.</p>
+                        </div>
+                    </div>
+                     <div class="case-study-card" data-category="real-estate">
+                         <div class="case-study-placeholder">
+                             <img src="./22.png" alt="Elysian Properties Chair" class="case-study-img" loading="lazy">
+                        </div>
+                         <div class="p-6">
+                            <p class="text-sm font-semibold mb-1" style="color: var(--accent-start);">Real Estate</p>
+                            <h3>Elysian Properties Virtual Tour</h3>
+                            <p>A multi-user virtual tour that accelerated off-plan sales by 60% and expanded international reach.</p>
+                        </div>
+                    </div>
+                     <div class="case-study-card" data-category="ecommerce">
+                        <div class="case-study-placeholder">
+                             <img src="./7.png" alt="Kinetix Wear Sneaker" class="case-study-img" loading="lazy">
+                        </div>
+                        <div class="p-6">
+                             <p class="text-sm font-semibold mb-1" style="color: var(--accent-start);">E-commerce</p>
+                             <h3>Kinetix Wear Web AR Try-On</h3>
+                             <p>An app-less AR "try-on" feature that increased purchase confidence and reduced product returns by 22%.</p>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </section>
+
+         <section id="testimonials" role="region" aria-labelledby="testimonials-title">
+             <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                     <h2 class="section-title" id="testimonials-title">What Our Clients Say</h2>
+                    <p class="section-subtitle">We're proud to build partnerships built on trust and results.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <div class="testimonial-card">
+                        <div class="testimonial-avatar-placeholder"><span>AD</span></div>
+                        <p class="italic mb-4">"The 3D configurator Kaiser3DWeb built is the centerpiece of our e-commerce strategy. Our conversion rates have never been higher, and returns are way down."</p>
+                        <h4 class="font-bold">Anna Duval</h4>
+                        <p class="text-sm">Head of E-commerce, Aura Home</p>
+                    </div>
+                     <div class="testimonial-card">
+                        <div class="testimonial-avatar-placeholder"><span>MS</span></div>
+                        <p class="italic mb-4">"Their team's obsession with performance and photorealism is unmatched. They delivered a WebGL experience that wowed our audience and our engineers."</p>
+                        <h4 class="font-bold">Marcus Shaw</h4>
+                        <p class="text-sm">Marketing Director, AutoVerse</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" role="region" aria-labelledby="faq-title">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                     <h2 class="section-title" id="faq-title">Frequently Asked Questions</h2>
+                    <p class="section-subtitle">Got questions? We've got answers. Here's what clients often ask.</p>
+                </div>
+                <div class="max-w-3xl mx-auto">
+                    <div class="faq-item">
+                        <div class="faq-question">How long does a 3D project take?</div>
+                        <div class="faq-answer">
+                            <p>A typical 3D product configurator takes 6-8 weeks, while a simpler WebGL experience might take 4-6 weeks. This includes discovery, 3D modeling, development, and optimization. We can provide a more accurate timeline after our initial consultation.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">What do you need from us to start?</div>
+                        <div class="faq-answer">
+                            <p>Ideally, we need any existing 3D models (like CAD or .obj files), product photos, and a clear list of customizable options (colors, materials, parts). If you don't have 3D models, our artists can create them from scratch using your photos and specifications.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">How much does a 3D web experience cost?</div>
+                        <div class="faq-answer">
+                            <p>Costs vary based on complexity. A simple 3D viewer might start in the low thousands, while a complex, multi-product configurator with e-commerce integration will be a more significant investment. We provide transparent, fixed-bid proposals after understanding your exact requirements.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Will this slow down my website?</div>
+                        <div class="faq-answer">
+                            <p>No. We are "performance obsessed." We use advanced techniques like Draco compression, GLTF file optimization, and lazy loading to ensure your 3D experience loads instantly and runs at a smooth 60fps, even on mobile devices. Your core site speed will not be negatively affected.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">Can you integrate with Shopify/WooCommerce?</div>
+                        <div class="faq-answer">
+                            <p>Absolutely. We specialize in e-commerce integration. Our 3D configurators can seamlessly connect to your Shopify, WooCommerce, Webflow, or custom backend. When a user finalizes their custom configuration, we pass that data directly to your cart system for a smooth checkout.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="insights" role="region" aria-labelledby="insights-title">
+             <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                     <h2 class="section-title" id="insights-title">Our Insights & News</h2>
+                     <p class="section-subtitle">The latest in 3D, WebGL, and immersive tech from our experts.</p>
+                </div>
+                <div id="insights-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="case-study-card" data-category="technical">
+                        <div class="case-study-placeholder">
+                             <img src="./25.png" alt="Abstract 3D rendering" class="case-study-img" loading="lazy">
+                        </div>
+                        <div class="p-6">
+                            <p class="text-sm font-semibold mb-1" style="color: var(--accent-start);">TECHNICAL DEEP DIVE</p>
+                            <h3 class="mb-3">Optimizing WebGL: The Quest for 60FPS</h3>
+                            <p class="mb-4 text-sm">A look into our performance-first methodology, from Draco compression to custom shaders.</p>
+                            <a href="#" class="font-semibold" style="color: var(--accent-start);">Read More &rarr;</a>
+                        </div>
+                    </div>
+                    <div class="case-study-card" data-category="strategy">
+                        <div class="case-study-placeholder">
+                             <img src="./22.png" alt="Product in AR" class="case-study-img" loading="lazy">
+                        </div>
+                        <div class="p-6">
+                            <p class="text-sm font-semibold mb-1" style="color: var(--accent-start);">E-COMMERCE STRATEGY</p>
+                            <h3 class="mb-3">Beyond 'Add to Cart': How 3D Drives ROI</h3>
+                            <p class="mb-4 text-sm">Analyzing the data on how interactive 3D boosts conversion rates and slashes product returns.</p>
+                            <a href="#" class="font-semibold" style="color: var(--accent-start);">Read More &rarr;</a>
+                        </div>
+                    </div>
+                    <div class="case-study-card" data-category="future">
+                         <div class="case-study-placeholder">
+                             <img src="./2.png" alt="Futuristic car render" class="case-study-img" loading="lazy">
+                        </div>
+                         <div class="p-6">
+                            <p class="text-sm font-semibold mb-1" style="color: var(--accent-start);">FUTURE OF WEB</p>
+                            <h3 class="mb-3">The Metaverse is in Your Browser: WebXR</h3>
+                            <p class="mb-4 text-sm">Exploring the future of app-less augmented reality and its impact on digital branding.</p>
+                            <a href="#" class="font-semibold" style="color: var(--accent-start);">Read More &rarr;</a>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </section>
+        <section id="contact" role="region" aria-labelledby="contact-title">
+            <div class="container">
+                <h2 class="section-title" id="contact-title">Ready to Build Your 3D Future?</h2>
+                <p class="section-subtitle">Let's talk. We can provide a complimentary consultation, audit your existing assets, and give you a clear, actionable plan to increase your sales with 3D.</p>
+                <div class="custom-form-container">
+                    <form id="contact-form" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeqzn6AtgkTdP_od3C8ZO5ExDyzYrlNVA1LgXWsEGuwW-GNhA/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
+                        <div class="form-group">
+                            <label for="fullName">Full name</label>
+                            <input type="text" id="fullName" name="entry.934952894" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="entry.822053109" placeholder="your.email@company.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone (optional)</label>
+                            <input type="tel" id="phone" name="entry.1274582004" placeholder="+1 (555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label for="comments">Tell us about your project</label>
+                            <textarea id="comments" name="entry.1038882302" placeholder="Describe your product, customization needs, or goals..."></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn accent-bg">Request consultation</button>
+                    </form>
+                    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { showModal(); }"></iframe>
+                    </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="submission-modal-overlay" class="modal-overlay"></div>
+    <div id="submission-modal" class="modal">
+        <div class="modal-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16"></svg>
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </svg>
+        </div>
+        <h3>Thanks — message received!</h3>
+        <p>We'll reply within 1-2 business days.</p> 
+        <button id="modal-close-btn" class="cta-button accent-bg modal-close-btn">Close</button>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                 <div class="footer-column">
+                    <a href="#hero" class="logo">Kaiser<span class="accent-text">3DWeb</span></a>
+                    <p>Transforming digital commerce with immersive, high-performance 3D and AR experiences.</p>
+                    <div class="social-links">
+                         <a href="#" aria-label="LinkedIn"><img src="./34.png" alt="LinkedIn Logo" class="footer-icon-img" loading="lazy"></a>
+                        <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg></a>
+                        <a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z"></path></svg></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Navigate</h4>
+                    <ul class="footer-links">
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#process">Process</a></li>
+                        <li><a href="#expertise">Expertise</a></li>
+                         <li><a href="#work">Our Work</a></li>
+                         <li><a href="#insights">Insights</a></li>
+                         <li><a href="#faq">FAQs</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                 <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="#services">3D Product Configurators</a></li>
+                        <li><a href="#services">Virtual Showrooms</a></li>
+                        <li><a href="#services">Interactive WebGL</a></li>
+                        <li><a href="#services">Web AR Integration</a></li>
+                    </ul>
+                </div>
+                 <div class="footer-column">
+                    <h4>Contact Us</h4>
+                    <ul class="footer-links">
+                        <li><a href="tel:+19514419719" style="display: flex; align-items: center; gap: 8px;">
+                            
+                            +1 (951) 441-9719
+                        </a></li>
+                        <li><a href="#contact">Request a Consultation</a></li>
+                         <li><a href="#">Privacy Policy</a></li>
+                         <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+         <div class="footer-bottom">
+             &copy; 2025 Kaiser3DWeb. All Rights Reserved.
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+
+    <script>
+        let submitted = false; // Google Form submission flag
+    </script>
+
+    <script>
+        // This function is now global for the iframe
+        function showModal() {
+            document.getElementById('submission-modal-overlay').classList.add('active');
+            document.getElementById('submission-modal').classList.add('active');
+            document.getElementById('contact-form').reset();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            let impactChartInstance = null; // --- ADDED: Store chart instance
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            const themeToggleBtnMobile = document.getElementById('theme-toggle-btn-mobile');
+            const bodyEl = document.body;
+
+            function applyTheme(theme) {
+                const isDarkMode = theme === 'dark';
+                bodyEl.classList.toggle('dark-mode', isDarkMode);
+                localStorage.setItem('theme', theme);
+
+                // === NEW: Update chart colors on theme change ===
+                if (impactChartInstance) {
+                    // We must get the *newly computed* value of the CSS variable
+                    const newTickColor = getComputedStyle(bodyEl).getPropertyValue('--text-muted-color');
+                    const newGridColor = getComputedStyle(bodyEl).getPropertyValue('--border-color');
+                    
+                    impactChartInstance.options.scales.y.ticks.color = newTickColor;
+                    impactChartInstance.options.scales.x.ticks.color = newTickColor;
+                    impactChartInstance.options.scales.y.grid.color = newGridColor;
+                    impactChartInstance.update('none'); // 'none' to prevent re-animation
+                }
+            }
+            function toggleTheme() {
+                const newTheme = bodyEl.classList.contains('dark-mode') ? 'light' : 'dark';
+                applyTheme(newTheme);
+            }
+            let savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            applyTheme(savedTheme);
+            if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+            if(themeToggleBtnMobile) themeToggleBtnMobile.addEventListener('click', toggleTheme);
+            
+            const header = document.getElementById('main-header');
+            const progressBar = document.getElementById('scroll-progress');
+            window.addEventListener('scroll', () => {
+                if (header) header.classList.toggle('scrolled', window.scrollY > 50);
+
+                if (progressBar) {
+                    const scrollPercent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+                    progressBar.style.width = scrollPercent + '%';
+                }
+            });
+            
+            const hamburger = document.querySelector('.hamburger');
+            const navMenuMobile = document.querySelector('.nav-links-mobile');
+// const hamburger = document.querySelector('.hamburger');
+// const navMenuMobile = document.querySelector('.nav-links-mobile');
+// const header = document.getElementById('main-header'); // Ensure the header element is retrieved
+
+if(hamburger && navMenuMobile) {
+    hamburger.addEventListener('click', () => {
+        
+        // Capture the state *before* the class toggle
+        const isCurrentlyActive = navMenuMobile.classList.contains('is-active');
+
+        // Logic for OPENING the menu (when it's NOT currently active)
+        if (!isCurrentlyActive && header) {
+            const headerHeight = header.offsetHeight;
+            
+            // FIX 1: Set the menu's starting point *below* the header
+            navMenuMobile.style.top = headerHeight + 'px';
+            
+            // FIX 2: Set the menu's height to the remaining viewport area
+            navMenuMobile.style.height = 'calc(100vh - ' + headerHeight + 'px)';
+        }
+
+        // Toggle the classes to initiate the open/close animation and body scroll lock
+        hamburger.classList.toggle('is-active');
+        navMenuMobile.classList.toggle('is-active');
+        bodyEl.classList.toggle('overflow-hidden'); 
+
+        const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+        hamburger.setAttribute('aria-expanded', !isExpanded);
+    });
+
+    navMenuMobile.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('is-active');
+            navMenuMobile.classList.remove('is-active');
+            bodyEl.classList.remove('overflow-hidden');
+            hamburger.setAttribute('aria-expanded', 'false');
+
+            // Reset dynamic styles after closing the menu for a clean state
+            // Use a slight delay to allow the CSS transition to finish before resetting
+            setTimeout(() => {
+                 navMenuMobile.style.top = '0'; 
+                 navMenuMobile.style.height = '100vh';
+            }, 500); // 500ms allows the 0.4s transition to complete
+        });
+    });
+}
+            
+            const faqItems = document.querySelectorAll('.faq-item');
+            if(faqItems.length > 0){
+                faqItems.forEach(item => {
+                    const question = item.querySelector('.faq-question');
+                    if(question){
+                        question.addEventListener('click', () => {
+                            const isActive = item.classList.contains('active');
+                            faqItems.forEach(i => {
+                                i.classList.remove('active');
+                                const ans = i.querySelector('.faq-answer');
+                                if(ans) ans.style.maxHeight = '0px';
+                            });
+                            if (!isActive) {
+                                item.classList.add('active');
+                                const answer = item.querySelector('.faq-answer');
+                                if(answer) answer.style.maxHeight = answer.scrollHeight + 'px';
+                            }
+                        });
+                    }
+                });
+            }
+            const modalOverlay = document.getElementById('submission-modal-overlay');
+            const modal = document.getElementById('submission-modal');
+            const closeModalBtn = document.getElementById('modal-close-btn');
+            function closeModal() {
+                if(modalOverlay && modal){
+                    modalOverlay.classList.remove('active');
+                    modal.classList.remove('active');
+                }
+            }
+            if(closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+            if(modalOverlay) modalOverlay.addEventListener('click', closeModal);
+            
+            // Chart.js (check if it's loaded)
+            if (typeof Chart !== 'undefined') {
+                const ctx = document.getElementById('impactChart');
+                if (ctx) {
+                    // --- MODIFIED: Assign to instance variable
+                    impactChartInstance = new Chart(ctx.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['Conversion Rate Lift', 'User Engagement Time', 'Purchase Confidence', 'Brand Recall'],
+                            datasets: [{ label: 'Avg. Client Metric Lift %', data: [40, 90, 60, 75], backgroundColor: [ 'rgba(37, 99, 235, 0.6)', 'rgba(34, 211, 238, 0.6)', 'rgba(37, 99, 235, 0.4)', 'rgba(34, 211, 238, 0.4)'], borderColor: [ '#2563EB', '#22D3EE', '#60A5FA', '#67E8F9'], borderWidth: 1 }]
+                        },
+                        options: {
+                            responsive: true, maintainAspectRatio: false, 
+                            scales: { 
+                                y: { 
+                                    beginAtZero: true, 
+                                    grid: { color: 'var(--border-color)' }, 
+                                    ticks: { 
+                                        callback: function(value) { return value + '%'; }, 
+                                        color: 'var(--text-muted-color)' // Initial color
+                                    } 
+                                }, 
+                                x: { 
+                                    grid: { display: false }, 
+                                    ticks: { 
+                                        color: 'var(--text-muted-color)' // Initial color
+                                    } 
+                                } 
+                            }, 
+                            plugins: { 
+                                legend: { display: false }, 
+                                tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.parsed.y + '%'; } } } 
+                            }
+                        }
+                    });
+
+                    // --- ADDED: One-time color fix on load ---
+                    // This ensures the chart colors are correct even if CSS vars load slowly
+                    const currentTickColor = getComputedStyle(bodyEl).getPropertyValue('--text-muted-color');
+                    const currentGridColor = getComputedStyle(bodyEl).getPropertyValue('--border-color');
+                    impactChartInstance.options.scales.y.ticks.color = currentTickColor;
+                    impactChartInstance.options.scales.x.ticks.color = currentTickColor;
+                    impactChartInstance.options.scales.y.grid.color = currentGridColor;
+                    impactChartInstance.update('none');
+                }
+            }
+
+// === UPDATED SERVICE TAB LOGIC ===
+            const serviceTabs = document.querySelectorAll('.service-tab');
+            const servicePanes = document.querySelectorAll('.service-pane');
+
+            if(serviceTabs.length > 0 && servicePanes.length > 0) {
+                
+                // Function to control video playback
+                function handleVideoPlayback(activePane) {
+                    servicePanes.forEach(pane => {
+                        const video = pane.querySelector('video');
+                        if (video) {
+                            if (pane === activePane) {
+                                // Play the active video
+                                video.play().catch(e => console.error("Video play failed:", e));
+                            } else {
+                                // Pause and rewind inactive videos
+                                video.pause();
+                                video.currentTime = 0;
+                            }
+                        }
+                    });
+                }
+
+                // Add click event to each tab
+                serviceTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabNumber = tab.dataset.tab;
+                        let activePane = null;
+
+                        // Toggle active class on tabs
+                        serviceTabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+
+                        // Toggle active/hidden class on panes
+                        servicePanes.forEach(pane => {
+                            const isActive = pane.dataset.pane === tabNumber;
+                            pane.classList.toggle('hidden', !isActive);
+                            pane.classList.toggle('active', isActive);
+                            if (isActive) {
+                                activePane = pane;
+                            }
+                        });
+
+                        // Control video playback
+                        handleVideoPlayback(activePane);
+                    });
+                });
+
+                // --- IMPORTANT: On initial page load ---
+                // Ensure only the default active video plays and others are paused.
+                const initiallyActivePane = document.querySelector('.service-pane.active');
+                if (initiallyActivePane) {
+                    handleVideoPlayback(initiallyActivePane);
+                } else {
+                    // If no pane is active by default, pause all
+                    handleVideoPlayback(null);
+                }
+            }
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const caseStudyCards = document.querySelectorAll('.case-study-card');
+            if(filterButtons.length > 0 && caseStudyCards.length > 0) {
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const filter = button.dataset.filter;
+                        filterButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        caseStudyCards.forEach(card => {
+                            card.style.display = (filter === 'all' || card.dataset.category === filter) ? 'block' : 'none';
+                        });
+                    });
+                });
+            }
+// === GSAP ANIMATION FUNCTION ===
+            function runGsapAnimations() {
+                // 1. Hero Load-in Animation
+                gsap.from("header .nav-links-desktop li", {
+                    duration: 0.8,
+                    opacity: 0,
+                    y: -30,
+                    stagger: 0.1,
+                    ease: "power2.out",
+                    delay: 0.2
+                });
+
+                const heroTL = gsap.timeline({ delay: 0.4 });
+                const heroContent = document.querySelector(".hero-inner > .fadeInUp:first-child");
+                if (heroContent) {
+                    // Set initial state
+                    gsap.set(heroContent.children, { opacity: 0, y: 30 });
+                    // Animate
+                    heroTL.to(heroContent.querySelector(".hero-eyebrow"), { duration: 0.6, opacity: 1, y: 0, ease: "power2.out" })
+                          .to(heroContent.querySelector(".hero-title"), { duration: 0.8, opacity: 1, y: 0, ease: "power2.out" }, "-=0.4")
+                          .to(heroContent.querySelector(".hero-lead"), { duration: 0.8, opacity: 1, y: 0, ease: "power2.out" }, "-=0.6")
+                          .to(heroContent.querySelector(".hero-cta-row"), { duration: 0.8, opacity: 1, y: 0, ease: "power2.out" }, "-=0.6")
+                          .to(heroContent.querySelector(".hero-stat-row"), { duration: 0.8, opacity: 1, y: 0, ease: "power2.out" }, "-=0.6");
+                }
+
+                gsap.from("#hero-3d-container", {
+                    duration: 1.2,
+                    opacity: 0,
+                    scale: 0.8,
+                    ease: "power3.out",
+                    delay: 0.8
+                });
+
+                // 2. Hero Scroll Parallax
+                if (heroContent) {
+                    gsap.to(heroContent, {
+                        yPercent: -20,
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: "#hero",
+                            start: "top top",
+                            end: "bottom top",
+                            scrub: true
+                        }
+                    });
+                }
+                gsap.to("#hero-3d-container", {
+                    yPercent: 10,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: "#hero",
+                        start: "top top",
+                        end: "bottom top",
+                        scrub: true
+                    }
+                });
+
+
+                // 4. Page Content Scroll-in Animations
+                gsap.utils.toArray("section:not(#hero)").forEach(section => {
+                    gsap.from(section, {
+                        opacity: 0,
+                        y: 50,
+                        duration: 0.8,
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: section,
+                            start: "top 85%", // Start animation when 85% from top
+                            toggleActions: "play none none none"
+                        }
+                    });
+                });
+            }
+
+            // Check if GSAP is loaded before trying to run animations
+            let gsapCheck = setInterval(() => {
+                if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                    clearInterval(gsapCheck);
+                    gsap.registerPlugin(ScrollTrigger); // Ensure plugin is registered
+                    runGsapAnimations();
+                }
+            }, 100);
+
+        });
+    </script>
+</body>
+</html>

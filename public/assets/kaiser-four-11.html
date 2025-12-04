@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kaiser3DWeb | Creative Studio — Immersive 3D Experiences</title>
+  <meta name="description" content="Kaiser3DWeb — immersive 3D product configurators, virtual showrooms, and WebAR for bold creative studios and brands." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* ===== Creative Studio palette (dark-first) =====
+       Primary gradient: electric violet -> azure cyan
+       Accent glows + subtle glass for depth
+    */
+    :root{
+      --bg-deep: #05040a;
+      --bg-mid: #0a0713;
+      --glass: rgba(255,255,255,0.03);
+      --muted: #9aa3bf;
+      --surface: rgba(255,255,255,0.02);
+      --accent-a: #8a2be2; /* electric violet */
+      --accent-b: #00e5ff; /* azure cyan */
+      --accent-c: #ff55dd; /* magenta spark */
+      --accent-glow-1: 0 18px 60px rgba(0,229,255,0.06);
+      --card-radius: 14px;
+      --glass-border: rgba(255,255,255,0.04);
+      --text: #e9f0ff;
+      --text-strong: #ffffff;
+      --glass-gradient: linear-gradient(135deg, rgba(138,43,226,0.06), rgba(0,229,255,0.03));
+    }
+
+    /* Light-mode override (optional) */
+    body.light-mode{
+      --bg-deep: #f7f9fc;
+      --bg-mid: #f1f5fb;
+      --glass: rgba(10,12,20,0.03);
+      --muted: #556070;
+      --surface: rgba(255,255,255,0.92);
+      --accent-a: #6b21a8;
+      --accent-b: #06b6d4;
+      --accent-glow-1: 0 18px 60px rgba(6,182,212,0.06);
+      --text: #091023;
+      --text-strong: #051025;
+      --glass-gradient: linear-gradient(135deg, rgba(107,33,168,0.06), rgba(6,182,212,0.03));
+    }
+
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:
+        radial-gradient(800px 400px at 15% 12%, rgba(138,43,226,0.06), transparent),
+        radial-gradient(900px 500px at 88% 88%, rgba(0,229,255,0.04), transparent),
+        linear-gradient(180deg,var(--bg-deep),var(--bg-mid));
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.6;
+      transition: background 0.35s ease, color 0.35s ease;
+      overflow-x:hidden;
+    }
+
+    /* Background particle canvas */
+    #particle-canvas{ position:fixed; inset:0; z-index:-1; width:100%; height:100%; pointer-events:none; }
+
+    /* Header */
+    header{ position:fixed; top:18px; left:0; right:0; z-index:1200; display:flex; justify-content:center; }
+    .nav-wrap{ width:100%; max-width:1200px; padding:0 20px; display:flex; justify-content:space-between; align-items:center; gap:20px; }
+    .brand{ display:flex; gap:12px; align-items:center; text-decoration:none; color:var(--text-strong); }
+    .logo-mark{
+      width:46px; height:46px; border-radius:12px;
+      background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
+      box-shadow: var(--accent-glow-1);
+      display:flex; align-items:center; justify-content:center; font-weight:800; color:white; font-family:Poppins;
+    }
+    .brand .title{ font-weight:700; font-size:1.02rem; letter-spacing:0.2px; }
+
+    nav ul{ display:flex; gap:18px; list-style:none; align-items:center; margin:0; padding:0; }
+    nav a{ color:var(--text); text-decoration:none; font-weight:600; opacity:0.95; transition:opacity .18s, transform .18s; }
+    nav a:hover{ opacity:1; transform:translateY(-2px); color:var(--accent-b); text-shadow:0 6px 22px rgba(0,229,255,0.06); }
+
+    .cta-button{
+      background: linear-gradient(90deg,var(--accent-a),var(--accent-b));
+      color:white; padding:10px 18px; border-radius:12px; box-shadow:var(--accent-glow-1);
+      text-decoration:none; font-weight:700; display:inline-flex; gap:10px; align-items:center;
+      transition: transform .18s, box-shadow .18s;
+    }
+    .cta-button:hover{ transform:translateY(-3px) scale(1.01); box-shadow:0 20px 70px rgba(0,229,255,0.07); }
+
+    /* Hero */
+    #hero{ min-height:92vh; display:flex; align-items:center; padding:110px 20px 60px; position:relative; }
+    .container{ max-width:1200px; margin:0 auto; width:100%; }
+    .hero-inner{ display:grid; grid-template-columns:1fr 560px; gap:44px; align-items:center; }
+    .hero-eyebrow{ display:inline-block; padding:6px 12px; border-radius:999px; background:rgba(255,255,255,0.02); color:var(--accent-b); font-weight:700; letter-spacing:1px; font-size:12px; border:1px solid rgba(255,255,255,0.03) }
+    h1.hero-title{ font-size:3.2rem; line-height:1.02; margin:18px 0 12px; letter-spacing:-1px; color:var(--text-strong); }
+    h1.hero-title .accent{ background: linear-gradient(90deg,var(--accent-c),var(--accent-b)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; padding-right:6px; }
+    .hero-lead{ color:var(--muted); font-size:1.05rem; max-width:60ch; margin-bottom:20px; }
+
+    .hero-cta-row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+    .hero-ghost{ padding:10px 14px; border-radius:12px; border:1px solid var(--glass-border); background:var(--glass); color:var(--text); font-weight:600; }
+
+    /* 3D frame */
+    #hero-3d-container{ width:100%; height:440px; border-radius:18px; overflow:hidden; display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(135deg, rgba(138,43,226,0.05), rgba(0,229,255,0.03));
+      box-shadow: 0 30px 90px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    #hero-3d-canvas{ width:100%; height:100%; display:block; cursor:grab; }
+
+    /* Sections */
+    section{ padding:72px 20px; }
+    .section-title{ font-size:2rem; font-weight:800; text-align:center; margin-bottom:12px; color:var(--text-strong); }
+    .section-sub{ text-align:center; color:var(--muted); max-width:860px; margin:0 auto 40px; }
+
+    /* Info grid */
+    .info-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+    .info-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--card-radius); padding:22px; border:1px solid var(--glass-border);
+      box-shadow: 0 8px 30px rgba(2,6,23,0.5);
+      transition: transform .22s ease, box-shadow .22s ease;
+      min-height:180px; display:flex; flex-direction:column; gap:12px;
+    }
+    .info-card:hover{ transform:translateY(-8px) scale(1.01); box-shadow: 0 20px 60px rgba(2,6,23,0.6); }
+    .info-icon{ width:64px; height:64px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:800; color:white;
+      background:linear-gradient(90deg,var(--accent-a),var(--accent-b));
+      box-shadow: var(--accent-glow-1);
+      font-family:Poppins;
+    }
+    .info-card h3{ margin:0; font-size:1.15rem; color:var(--text-strong); font-weight:700; }
+    .info-card p{ margin:0; color:var(--muted); font-size:0.98rem; flex:1; }
+
+    /* Case study grid and images */
+    .case-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:18px; }
+    .case-card{ border-radius:14px; overflow:hidden; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--glass-border); transition:transform .22s, box-shadow .22s; }
+    .case-media{ height:220px; display:block; background-size:cover; background-position:center; transform-origin:center; transition:transform .6s cubic-bezier(.2,.8,.2,1); }
+    .case-card:hover .case-media{ transform:scale(1.02); }
+    .case-body{ padding:16px; }
+    .pill{ display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,0.02); color:var(--muted); font-weight:600; font-size:12px; }
+
+    /* Testimonials */
+    .testimonial-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:18px; max-width:980px; margin:0 auto; }
+    .testimonial{ padding:20px; border-radius:14px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--glass-border); }
+
+    /* Contact form */
+    .custom-form-container{ max-width:920px; margin:0 auto; padding:22px; border-radius:14px; background:var(--surface); border:1px solid var(--glass-border); box-shadow:0 12px 40px rgba(2,6,23,0.6); }
+    label{ display:block; font-size:0.9rem; color:var(--muted); margin-bottom:6px; font-weight:600; }
+    input[type="text"], input[type="email"], textarea, input[type="tel"]{
+      width:100%; padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--text);
+      font-size:1rem; resize:vertical;
+    }
+    .submit-btn{ padding:12px 18px; border-radius:12px; background:linear-gradient(90deg,var(--accent-a),var(--accent-b)); color: white; border:none; font-weight:800; cursor:pointer; }
+
+    footer{ padding:40px 20px; border-top:1px solid rgba(255,255,255,0.03); margin-top:40px; color:var(--muted); background:transparent; }
+
+    /* Responsive */
+    @media (max-width:1100px){
+      .hero-inner{ grid-template-columns:1fr 420px; gap:28px; }
+      .info-grid{ grid-template-columns:repeat(2,1fr); }
+      .case-grid{ grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width:760px){
+      header{ top:12px; }
+      .hero-inner{ grid-template-columns:1fr; }
+      #hero-3d-container{ height:320px; }
+      .info-grid{ grid-template-columns:1fr; }
+      .case-grid{ grid-template-columns:1fr; }
+      nav ul{ display:none; }
+      .mobile-nav{ display:flex; gap:8px; align-items:center; }
+    }
+
+    /* Animations */
+    .fadeInUp { animation: fadeInUp .7s ease both; }
+    @keyframes fadeInUp { from { opacity:0; transform: translateY(14px);} to { opacity:1; transform: translateY(0);} }
+    .glowPulse { animation: glowPulse 3.5s ease-in-out infinite; }
+    @keyframes glowPulse { 0% { filter: drop-shadow(0 0 0 rgba(0,0,0,0)); } 50% { filter: drop-shadow(0 18px 60px rgba(0,229,255,0.06)); } 100% { filter: drop-shadow(0 0 0 rgba(0,0,0,0)); } }
+
+    /* small utility */
+    .muted-small{ color:var(--muted); font-size:0.95rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Particles / background -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-wrap container">
+      <a class="brand" href="#hero" aria-label="Kaiser3DWeb – home">
+        <div class="logo-mark">K3</div>
+        <div class="title">Kaiser<span style="color:var(--accent-b)">3DWeb</span></div>
+      </a>
+
+      <nav aria-label="Primary navigation">
+        <ul>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#process">Process</a></li>
+          <li><a href="#work">Work</a></li>
+          <li><a href="#contact" class="cta-button">Start Project</a></li>
+        </ul>
+      </nav>
+
+      <div class="mobile-nav" aria-hidden="true">
+        <button id="theme-toggle-btn" title="Toggle theme" style="background:transparent; border:1px solid rgba(255,255,255,0.04); padding:10px; border-radius:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <!-- HERO -->
+    <section id="hero" aria-label="Hero">
+      <div class="container">
+        <div class="hero-inner">
+          <div class="fadeInUp">
+            <div class="hero-eyebrow">IMMERSIVE 3D · WEB AR · CONFIGURATORS</div>
+            <h1 class="hero-title">
+              Turn Browsers into <span class="accent">Showrooms</span><br>
+              — Sell With Spatial Confidence
+            </h1>
+            <p class="hero-lead">We craft cinematic, interactive 3D experiences that scale — from realtime product configurators to app-less WebAR. Fast prototypes, elegant UI, measurable ROI.</p>
+
+            <div class="hero-cta-row">
+              <a class="cta-button" href="#contact">Start Your Project</a>
+              <a class="hero-ghost" href="#work">See Case Studies</a>
+            </div>
+
+            <div style="margin-top:18px; max-width:680px; display:flex; gap:12px; align-items:center;">
+              <div style="display:flex; gap:8px; align-items:center;">
+                <div style="width:36px; height:36px; border-radius:10px; background:linear-gradient(90deg,var(--accent-a),var(--accent-b)); color:white; display:flex; align-items:center; justify-content:center; font-weight:800;">★</div>
+                <div style="font-size:0.95rem; color:var(--muted)"><strong style="color:var(--text-strong)">Avg. 40%+</strong> conversion lift (measured)</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="hero-3d-container" role="img" aria-label="Live 3D demo" class="fadeInUp">
+            <canvas id="hero-3d-canvas" width="560" height="440"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT / PHILOSOPHY -->
+    <section id="about" aria-labelledby="about-title">
+      <div class="container">
+        <h2 id="about-title" class="section-title">Our Philosophy</h2>
+        <p class="section-sub">We blend cinematic craft with engineering discipline. Our goal: create 3D experiences that are emotionally resonant and commercially measurable.</p>
+        <div style="max-width:980px; margin:20px auto 0; display:flex; gap:22px; align-items:center; justify-content:center; flex-wrap:wrap;">
+          <div style="flex:1; min-width:260px; background:var(--surface); border-radius:12px; padding:18px; border:1px solid var(--glass-border);">
+            <h3 style="margin:0 0 8px; color:var(--text-strong)">Design-first engineering</h3>
+            <p style="margin:0; color:var(--muted)">We start with visual storytelling then optimize assets for web performance — always ensuring brand fidelity and speed.</p>
+          </div>
+          <div style="flex:1; min-width:260px; background:var(--surface); border-radius:12px; padding:18px; border:1px solid var(--glass-border);">
+            <h3 style="margin:0 0 8px; color:var(--text-strong)">Data-driven outcomes</h3>
+            <p style="margin:0; color:var(--muted)">Every build includes instrumentation for engagement & conversion tracking so design decisions are backed by real metrics.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" aria-labelledby="services-title">
+      <div class="container">
+        <h2 id="services-title" class="section-title">What we build</h2>
+        <p class="section-sub">Realtime product configurators, virtual showrooms, WebAR, and bespoke WebGL storytelling — engineered for commerce and spectacle.</p>
+
+        <div class="info-grid fadeInUp" style="margin-top:18px;">
+          <div class="info-card">
+            <div class="info-icon">CG</div>
+            <h3>Realtime Configurators</h3>
+            <p>High fidelity customization UIs with instantaneous visual feedback — color, materials, parts, and options — optimized for 60fps on most devices.</p>
+          </div>
+
+          <div class="info-card">
+            <div class="info-icon">XR</div>
+            <h3>Web AR • App-less</h3>
+            <p>Contextual try-on and in-room visualization that removes friction — AR experiences launched directly from product pages and marketing campaigns.</p>
+          </div>
+
+          <div class="info-card">
+            <div class="info-icon">WV</div>
+            <h3>Immersive Brand Experiences</h3>
+            <p>Interactive microsites and virtual showrooms for product launches, events, and campaigns — storytelling that converts and delights.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section id="process" aria-labelledby="process-title" style="background:linear-gradient(180deg, rgba(0,0,0,0.02), transparent);">
+      <div class="container">
+        <h2 id="process-title" class="section-title">Studio Process</h2>
+        <p class="section-sub">Iterative sprints, early prototypes, and measurable launches. We align design, 3D, and frontend engineering from day one.</p>
+
+        <div style="max-width:900px; margin:30px auto 0;">
+          <div style="display:flex; gap:18px; flex-direction:column;">
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:46px; height:46px; border-radius:10px; background:linear-gradient(90deg,var(--accent-a),var(--accent-b)); color:white; display:flex; align-items:center; justify-content:center; font-weight:800;">1</div>
+              <div>
+                <h3 style="margin:0 0 6px; color:var(--text-strong)">Discovery & Prototype</h3>
+                <p style="margin:0; color:var(--muted)">Fast prototype to validate UX and performance before polishing visuals and integrating with your stack.</p>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:46px; height:46px; border-radius:10px; background:linear-gradient(90deg,var(--accent-a),var(--accent-b)); color:white; display:flex; align-items:center; justify-content:center; font-weight:800;">2</div>
+              <div>
+                <h3 style="margin:0 0 6px; color:var(--text-strong)">Art & Optimization</h3>
+                <p style="margin:0; color:var(--muted)">Photoreal art direction plus LODs, texture atlasing, and compressed GLTF for web-scale performance.</p>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:46px; height:46px; border-radius:10px; background:linear-gradient(90deg,var(--accent-a),var(--accent-b)); color:white; display:flex; align-items:center; justify-content:center; font-weight:800;">3</div>
+              <div>
+                <h3 style="margin:0 0 6px; color:var(--text-strong)">Integrate & Measure</h3>
+                <p style="margin:0; color:var(--muted)">Shopify, headless, or custom integrations with analytics to measure conversions and UX impact post-launch.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TECH STACK & CHART -->
+    <section id="tech-stack">
+      <div class="container">
+        <h2 class="section-title">Tech & Tools</h2>
+        <p class="section-sub">Three.js, R3F, GLTF + Draco, GLSL, and modern frontend stacks for maintainable 3D on the web.</p>
+
+        <div class="tech-logos" style="margin-top:18px;">
+          <div style="padding:10px 14px; border-radius:10px; background:var(--surface); border:1px solid var(--glass-border)">Three.js</div>
+          <div style="padding:10px 14px; border-radius:10px; background:var(--surface); border:1px solid var(--glass-border)">React Three Fiber</div>
+          <div style="padding:10px 14px; border-radius:10px; background:var(--surface); border:1px solid var(--glass-border)">GLTF / Draco</div>
+          <div style="padding:10px 14px; border-radius:10px; background:var(--surface); border:1px solid var(--glass-border)">WebXR</div>
+        </div>
+
+        <div style="margin-top:28px; max-width:920px; margin-left:auto; margin-right:auto;">
+          <canvas id="impactChart" style="width:100%; height:320px;"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- SELECTED WORK (updated images & extra projects) -->
+    <section id="work" aria-labelledby="work-title">
+      <div class="container">
+        <h2 id="work-title" class="section-title">Selected Work</h2>
+        <p class="section-sub">A curated selection of projects demonstrating visual craft and commercial impact.</p>
+
+        <div class="case-grid">
+          <!-- Project 1: Furniture Configurator (high-res 3D render) -->
+          <div class="case-card">
+            <div class="case-media" style="background-image:linear-gradient(180deg, rgba(0,0,0,0.24), rgba(0,0,0,0.08)), url('https://images.unsplash.com/photo-1616628183827-3b64d2f2f1b8?q=80&w=1600&auto=format&fit=crop');"></div>
+            <div class="case-body">
+              <div class="pill">E-commerce</div>
+              <h3 style="margin:10px 0 6px; color:var(--text-strong)">Aura Home — Sofa Configurator</h3>
+              <p style="margin:0; color:var(--muted)">Realtime material & fabric swaps with in-room AR preview — boosted add-to-cart by 38%.</p>
+            </div>
+          </div>
+
+          <!-- Project 2: Automotive EV (stylized render) -->
+          <div class="case-card">
+            <div class="case-media" style="background-image:linear-gradient(180deg, rgba(0,0,0,0.24), rgba(0,0,0,0.08)), url('https://images.unsplash.com/photo-1512303452022-9219ca7f4df0?q=80&w=1600&auto=format&fit=crop');"></div>
+            <div class="case-body">
+              <div class="pill">Automotive</div>
+              <h3 style="margin:10px 0 6px; color:var(--text-strong)">AutoVerse — EV Launch Experience</h3>
+              <p style="margin:0; color:var(--muted)">A brand microsite with dramatic lighting and interactive configurator — 3x time-on-site during launch.</p>
+            </div>
+          </div>
+
+          <!-- Project 3: AR Try-On (sneaker / wearable) -->
+          <div class="case-card">
+            <div class="case-media" style="background-image:linear-gradient(180deg, rgba(0,0,0,0.24), rgba(0,0,0,0.08)), url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1600&auto=format&fit=crop');"></div>
+            <div class="case-body">
+              <div class="pill">Retail • AR</div>
+              <h3 style="margin:10px 0 6px; color:var(--text-strong)">Kinetix — AR Try-On</h3>
+              <p style="margin:0; color:var(--muted)">App-less try-on that increased purchase confidence and reduced returns by 22%.</p>
+            </div>
+          </div>
+
+          <!-- Project 4: Product Showcase (new) -->
+          <div class="case-card">
+            <div class="case-media" style="background-image:linear-gradient(180deg, rgba(0,0,0,0.24), rgba(0,0,0,0.08)), url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop');"></div>
+            <div class="case-body">
+              <div class="pill">Hardware</div>
+              <h3 style="margin:10px 0 6px; color:var(--text-strong)">Edison Labs — Interactive Demo</h3>
+              <p style="margin:0; color:var(--muted)">Interactive product demo used in B2B outreach — improved demo conversion rates by 44%.</p>
+            </div>
+          </div>
+
+          <!-- Project 5: Immersive Experience (new) -->
+          <div class="case-card">
+            <div class="case-media" style="background-image:linear-gradient(180deg, rgba(0,0,0,0.24), rgba(0,0,0,0.08)), url('https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1600&auto=format&fit=crop');"></div>
+            <div class="case-body">
+              <div class="pill">Brand</div>
+              <h3 style="margin:10px 0 6px; color:var(--text-strong)">Nebula — Launch Experience</h3>
+              <p style="margin:0; color:var(--muted)">Full-screen WebGL launch that blended storytelling and product interaction for a premium reveal.</p>
+            </div>
+          </div>
+
+          <!-- Project 6: Visualization (new) -->
+          <div class="case-card">
+            <div class="case-media" style="background-image:linear-gradient(180deg, rgba(0,0,0,0.24), rgba(0,0,0,0.08)), url('https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=1600&auto=format&fit=crop');"></div>
+            <div class="case-body">
+              <div class="pill">Visualization</div>
+              <h3 style="margin:10px 0 6px; color:var(--text-strong)">Voxel Studio — Visualization Suite</h3>
+              <p style="margin:0; color:var(--muted)">Visual storytelling for enterprise clients — interactive filters and animated scenes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials">
+      <div class="container">
+        <h2 class="section-title">Clients say</h2>
+        <p class="section-sub">We focus on long-term partnerships and measurable business results.</p>
+
+        <div class="testimonial-grid" style="margin-top:20px;">
+          <div class="testimonial">
+            <p style="font-style:italic; color:var(--text-strong)">"Kaiser3DWeb delivered a polished configurator that became central to our product pages — conversion and retention both improved."</p>
+            <div style="margin-top:10px; font-weight:700; color:var(--text-strong)">Anna Duval</div>
+            <div style="color:var(--muted); font-size:0.92rem">Head of E-commerce, Aura Home</div>
+          </div>
+
+          <div class="testimonial">
+            <p style="font-style:italic; color:var(--text-strong)">"Their performance engineering is next level — beautiful visuals without sacrificing mobile speed."</p>
+            <div style="margin-top:10px; font-weight:700; color:var(--text-strong)">Marcus Shaw</div>
+            <div style="color:var(--muted); font-size:0.92rem">Marketing Director, AutoVerse</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT (updated: phone field + validation) -->
+    <section id="contact" style="padding-top:48px; padding-bottom:80px;">
+      <div class="container">
+        <h2 class="section-title">Ready to collaborate?</h2>
+        <p class="section-sub">Request a complimentary discovery call — we’ll audit your assets and propose a practical plan.</p>
+
+        <div class="custom-form-container fadeInUp" style="margin-top:20px;">
+          <!-- Google Form kept intact: ensure phone field entry key matches your form (entry.1274582004 used previously) -->
+          <form id="contact-form" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeqzn6AtgkTdP_od3C8ZO5ExDyzYrlNVA1LgXWsEGuwW-GNhA/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                <label for="fullName">Full name</label>
+                <input id="fullName" name="entry.934952894" placeholder="Your name" required>
+              </div>
+              <div>
+                <label for="email">Email</label>
+                <input id="email" name="entry.822053109" type="email" placeholder="you@company.com" required>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
+              <div>
+                <label for="company">Company</label>
+                <input id="company" name="entry.23123123" placeholder="Company name (optional)">
+              </div>
+              <div>
+                <label for="phone">Phone</label>
+                <!-- Pattern allows +country and numbers, spaces, dashes -->
+                <input id="phone" name="entry.1274582004" type="tel" placeholder="+1 555 555 5555" pattern="^\+?[0-9\s\-\(\)]{7,25}$" title="Enter a valid phone number" required>
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <label for="comments">Tell us about your project</label>
+              <textarea id="comments" name="entry.1038882302" placeholder="Short description, platform, and goals..." rows="5"></textarea>
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:14px; align-items:center;">
+              <button type="submit" class="submit-btn">Request consultation — it's free</button>
+              <button type="button" onclick="location.href='#work'" class="hero-ghost" style="border-radius:12px;">View case studies</button>
+              <div class="muted-small" style="margin-left:auto;">Or email <a href="mailto:hello@kaiser3dweb.com" style="color:var(--accent-b)">hello@kaiser3dweb.com</a></div>
+            </div>
+          </form>
+
+          <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted){ showModal(); }"></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="submission-modal-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none; z-index:2000;"></div>
+  <div id="submission-modal" style="position:fixed; left:50%; top:50%; transform:translate(-50%,-50%) scale(.98); background:linear-gradient(180deg,var(--bg-mid),rgba(10,6,20,0.85)); padding:24px; border-radius:12px; border:1px solid var(--glass-border); display:none; z-index:2001; max-width:420px; width:90%;">
+    <div style="display:flex; gap:12px; align-items:center;">
+      <div style="width:50px; height:50px; border-radius:10px; background:linear-gradient(90deg,var(--accent-a),var(--accent-b)); display:flex; align-items:center; justify-content:center; color:white; font-size:20px; font-weight:800;">✓</div>
+      <div>
+        <h3 style="margin:0; color:var(--text-strong)">Thanks — message received!</h3>
+        <p style="margin:6px 0 0; color:var(--muted)">We’ll reply within 1–2 business days. For urgent requests email <a href="mailto:hello@kaiser3dweb.com" style="color:var(--accent-b)">hello@kaiser3dweb.com</a>.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+      <button id="modal-close-btn" class="cta-button" style="padding:8px 14px;">Close</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container" style="display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start; justify-content:space-between;">
+      <div style="max-width:420px;">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div class="logo-mark" style="width:46px; height:46px; border-radius:12px;">K3</div>
+          <div style="font-weight:700; color:var(--text-strong)">Kaiser3DWeb</div>
+        </div>
+        <p style="color:var(--muted); margin-top:12px;">Creative studio building immersive 3D products and AR experiences for ambitious brands.</p>
+      </div>
+
+      <div style="display:flex; gap:36px; flex-wrap:wrap;">
+        <div>
+          <h4 style="margin:0 0 8px; color:var(--text-strong)">Navigate</h4>
+          <ul style="list-style:none; padding:0; margin:0; color:var(--muted)">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#process">Process</a></li>
+            <li><a href="#work">Work</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="margin:0 0 8px; color:var(--text-strong)">Contact</h4>
+          <div style="color:var(--muted)">hello@kaiser3dweb.com</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:22px; color:var(--muted)">© <span id="year"></span> Kaiser3DWeb — All rights reserved.</div>
+  </footer>
+
+  <!-- External libs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    // small helpers
+    document.getElementById('year').textContent = new Date().getFullYear();
+    let submitted = false;
+    function showModal(){
+      document.getElementById('submission-modal-overlay').style.display = 'block';
+      document.getElementById('submission-modal').style.display = 'block';
+      try { document.getElementById('contact-form').reset(); } catch(e){}
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      // theme toggle: dark as default, optional light mode
+      const themeBtn = document.getElementById('theme-toggle-btn');
+      const bodyEl = document.body;
+      const saved = localStorage.getItem('k3_theme_v2');
+      if(saved === 'light') bodyEl.classList.add('light-mode');
+
+      themeBtn.addEventListener('click', () => {
+        bodyEl.classList.toggle('light-mode');
+        localStorage.setItem('k3_theme_v2', bodyEl.classList.contains('light-mode') ? 'light' : 'dark');
+        updateThreeColors();
+      });
+
+      // modal close
+      const modalClose = document.getElementById('modal-close-btn');
+      if(modalClose) modalClose.addEventListener('click', () => {
+        document.getElementById('submission-modal-overlay').style.display = 'none';
+        document.getElementById('submission-modal').style.display = 'none';
+      });
+
+      // Chart.js: impact chart
+      const ctx = document.getElementById('impactChart');
+      if(ctx){
+        new Chart(ctx.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['Conversion', 'Engagement', 'Confidence', 'Retention'],
+            datasets: [{
+              label: 'Avg client lift (%)',
+              data: [42, 90, 60, 35],
+              backgroundColor: ['rgba(138,43,226,0.95)','rgba(0,229,255,0.95)','rgba(138,43,226,0.65)','rgba(0,229,255,0.65)'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{ legend:{display:false} },
+            scales:{
+              y:{ beginAtZero:true, ticks:{ callback: v => v + '%', color: getComputedStyle(document.body).getPropertyValue('--muted') } },
+              x:{ ticks:{ color: getComputedStyle(document.body).getPropertyValue('--muted') } }
+            }
+          }
+        });
+      }
+
+      // small header scroll effect
+      const header = document.querySelector('header');
+      window.addEventListener('scroll', () => {
+        if(window.scrollY > 30) header.style.transform = 'translateY(-6px)'; else header.style.transform = 'translateY(0)';
+      });
+
+      // Validate phone pattern before letting the form submit (simple UX guard)
+      const form = document.getElementById('contact-form');
+      if(form){
+        form.addEventListener('submit', (e) => {
+          const phone = document.getElementById('phone');
+          if(phone && !phone.checkValidity()){
+            e.preventDefault();
+            phone.reportValidity();
+          }
+        });
+      }
+
+      // initialize three colors to match theme
+      updateThreeColors();
+
+    });
+
+    function updateThreeColors(){
+      // Update colors for three.js materials if they exist
+      const isDark = !document.body.classList.contains('light-mode');
+      const pColor = isDark ? 0x00e5ff : 0x6b21a8;
+      const oColor = isDark ? 0xffffff : 0x051025;
+      if(window.particleMaterial) try { window.particleMaterial.color.setHex(pColor); } catch(e){}
+      if(window.heroMaterial) try { window.heroMaterial.color.setHex(oColor); } catch(e){}
+      if(window.heroPointLight) try { window.heroPointLight.color.setHex(isDark ? 0x00e5ff : 0x6b21a8); } catch(e){}
+    }
+
+    /* -----------------------------
+       THREE.JS: Particles + hero object (adapted to new palette)
+       Re-uses your original logic with safe checks
+       ------------------------------*/
+    if(typeof THREE !== 'undefined'){
+      let particleScene, particleCamera, particleRenderer, particles;
+      function initParticles(){
+        const canvas = document.getElementById('particle-canvas');
+        if(!canvas) return;
+        particleScene = new THREE.Scene();
+        particleCamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        particleCamera.position.z = 6;
+        particleRenderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+        particleRenderer.setSize(window.innerWidth, window.innerHeight);
+
+        const particleCount = 2600;
+        const positions = new Float32Array(particleCount*3);
+        for(let i=0;i<particleCount;i++){
+          positions[i*3] = (Math.random()-0.5)*20;
+          positions[i*3+1] = (Math.random()-0.5)*12;
+          positions[i*3+2] = (Math.random()-0.5)*10;
+        }
+        const pGeometry = new THREE.BufferGeometry();
+        pGeometry.setAttribute('position', new THREE.BufferAttribute(positions,3));
+        const isDark = !document.body.classList.contains('light-mode');
+        const pColor = isDark ? 0x00e5ff : 0x6b21a8;
+        const pMaterial = new THREE.PointsMaterial({ color: pColor, size:0.02, transparent:true, blending:THREE.AdditiveBlending, depthWrite:false });
+        window.particleMaterial = pMaterial;
+        particles = new THREE.Points(pGeometry, pMaterial);
+        particleScene.add(particles);
+      }
+
+      // hero object
+      let heroScene, heroCamera, heroRenderer, mesh, lastSwitch=0, clock = new THREE.Clock();
+      function initHero(){
+        const container = document.getElementById('hero-3d-container');
+        const canvas = document.getElementById('hero-3d-canvas');
+        if(!container || !canvas) return;
+        heroScene = new THREE.Scene();
+        heroCamera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 1000);
+        heroCamera.position.z = 3.4;
+        heroRenderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
+        heroRenderer.setSize(container.clientWidth, container.clientHeight);
+        heroRenderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+        heroScene.add(new THREE.AmbientLight(0xffffff,0.6));
+        const pointLight = new THREE.PointLight(!document.body.classList.contains('light-mode') ? 0x00e5ff : 0x6b21a8, 2, 40);
+        pointLight.position.set(4,4,4);
+        heroScene.add(pointLight);
+        window.heroPointLight = pointLight;
+
+        const size = 1.45;
+        const geoms = [
+          new THREE.BoxGeometry(size,size,size,12,12,12),
+          new THREE.SphereGeometry(size/1.35,32,32),
+          new THREE.TorusKnotGeometry(size/1.9, size/8, 120, 24),
+          new THREE.IcosahedronGeometry(size/1.5,1)
+        ];
+        const isDark = !document.body.classList.contains('light-mode');
+        const matColor = isDark ? 0xffffff : 0x051025;
+        const mat = new THREE.MeshStandardMaterial({ color:matColor, metalness:0.4, roughness:0.25, wireframe:true });
+        window.heroMaterial = mat;
+        mesh = new THREE.Mesh(geoms[0], mat);
+        heroScene.add(mesh);
+
+        container.addEventListener('pointermove', (e) => {
+          const rect = container.getBoundingClientRect();
+          const x = ((e.clientX - rect.left)/rect.width)*2 - 1;
+          const y = -(((e.clientY - rect.top)/rect.height)*2 - 1);
+          mesh.rotation.y += (x*0.6 - mesh.rotation.y) * 0.08;
+          mesh.rotation.x += (y*0.6 - mesh.rotation.x) * 0.08;
+        });
+
+        // shape switch (safe)
+        window.switchShape = () => {
+          try{
+            const elapsed = clock.getElapsedTime();
+            const nextIdx = Math.floor(elapsed / 4) % geoms.length;
+            mesh.geometry.dispose();
+            mesh.geometry = geoms[nextIdx];
+          }catch(e){}
+        };
+      }
+
+      function animate(){
+        requestAnimationFrame(animate);
+        const elapsed = clock.getElapsedTime();
+        if(particles && particleRenderer && particleScene && particleCamera){
+          particles.rotation.y = elapsed * 0.06;
+          particleRenderer.render(particleScene, particleCamera);
+        }
+        if(mesh && heroRenderer && heroScene && heroCamera){
+          mesh.rotation.z += 0.0016;
+          if(elapsed - lastSwitch > 4){
+            try{ window.switchShape(); }catch(e){}
+            lastSwitch = elapsed;
+          }
+          heroRenderer.render(heroScene, heroCamera);
+        }
+      }
+
+      function onResize(){
+        if(particleCamera && particleRenderer){
+          particleCamera.aspect = window.innerWidth/window.innerHeight;
+          particleCamera.updateProjectionMatrix();
+          particleRenderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        if(heroCamera && heroRenderer){
+          const container = document.getElementById('hero-3d-container');
+          if(container){
+            heroCamera.aspect = container.clientWidth/container.clientHeight;
+            heroCamera.updateProjectionMatrix();
+            heroRenderer.setSize(container.clientWidth, container.clientHeight);
+          }
+        }
+      }
+      window.addEventListener('resize', onResize);
+
+      // init
+      initParticles();
+      initHero();
+      animate();
+    }
+  </script>
+</body>
+</html>

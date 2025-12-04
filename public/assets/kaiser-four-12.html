@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kaiser3DWeb | Interactive 3D Websites & Product Configurators</title>
+    <meta name="description" content="Kaiser3DWeb builds high-performance 3D product configurators and immersive WebGL experiences that boost sales. Integrate with Shopify, see in AR, and increase conversions." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* === New Color Palette Variables === */
+        :root {
+            /* Light theme */
+            --primary-color: #FFFFFF;         /* White page background */
+            --secondary-color: #F9FAFB;       /* Very light gray sections */
+            --input-bg-color: #F3F4F6;        /* Light gray inputs */
+            --accent-start: #2563EB;          /* Blue-600 */
+            --accent-end: #22D3EE;            /* Cyan-400 */
+            --accent-glow: rgba(37, 99, 235, 0.18);
+            --text-color: #111827;            /* Dark blue/gray text */
+            --text-muted-color: #4B5563;      /* Medium gray text */
+            --card-bg-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+            --border-color: rgba(17, 24, 39, 0.1); /* Light gray border */
+        }
+
+        body.dark-mode {
+            /* Dark theme */
+            --primary-color: #111827;         /* Dark blue/gray background */
+            --secondary-color: #2C3A47;       /* Slightly lighter dark gray */
+            --input-bg-color: #374151;        /* Medium dark gray */
+            --accent-start: #3B82F6;          /* Blue-500 */
+            --accent-end: #67E8F9;            /* Cyan-300 */
+            --accent-glow: rgba(59, 130, 246, 0.14);
+            --text-color: #F9FAFB;            /* Very light gray text */
+            --text-muted-color: #9CA3AF;      /* Lighter gray text */
+            --card-bg-color: rgba(31, 41, 55, 0.7); /* Transparent dark gray */
+            --border-color: rgba(249, 250, 251, 0.1); /* Light gray border */
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            /* Ensure particle canvas background matches theme */
+            background-color: var(--primary-color);
+            transition: background-color 0.3s ease;
+        }
+
+        /* === START OF INTEGRATED HERO STYLES === */
+        #hero {
+            min-height: 92vh; /* from kaiser-four-11 */
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 110px; /* from kaiser-four-11 */
+            padding-bottom: 60px; /* from kaiser-four-11 */
+            overflow: hidden;
+        }
+
+        #hero .container {
+            /* This replaces the old flex container */
+            display: block; 
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-inner {
+            display: grid;
+            grid-template-columns: 1fr 560px; /* from kaiser-four-11 */
+            gap: 44px; /* from kaiser-four-11 */
+            align-items: center;
+        }
+        
+        /* This .fadeInUp div replaces the old .hero-content div */
+        .fadeInUp {
+            z-index: 2;
+            /* Removed background, backdrop-filter, padding, and border for a floating effect */
+            /* The padding is re-applied in the (max-width: 992px) media query for mobile layout */
+        }
+        body.dark-mode .fadeInUp {
+             /* Removed background properties */
+        }
+        
+        .hero-eyebrow {
+            display: inline-block; /* from kaiser-four-11 */
+            padding: 6px 12px; /* from kaiser-four-11 */
+            border-radius: 999px; /* from kaiser-four-11 */
+            background: rgba(37, 99, 235, 0.05); /* Using theme colors */
+            color: var(--accent-start); /* Use theme accent */
+            font-weight: 700; /* from kaiser-four-11 */
+            letter-spacing: 1px; /* from kaiser-four-11 */
+            font-size: 12px; /* from kaiser-four-11 */
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+         body.dark-mode .hero-eyebrow {
+             background: rgba(59, 130, 246, 0.08);
+             color: var(--accent-end);
+         }
+
+
+        h1.hero-title {
+            font-size: 3.2rem; /* from kaiser-four-11 */
+            font-weight: 700;
+            line-height: 1.02; /* from kaiser-four-11 */
+            margin: 18px 0 12px; /* from kaiser-four-11 */
+            letter-spacing: -1px; /* from kaiser-four-11 */
+            color: var(--text-color);
+        }
+
+        h1.hero-title .accent {
+            /* Use gradient style from original kaiser-four-03.html */
+            background: linear-gradient(to right, var(--accent-start), var(--accent-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px var(--accent-glow);
+            padding-right: 6px; /* from kaiser-four-11 */
+        }
+
+        .hero-lead {
+            font-size: 1.05rem; /* from kaiser-four-11 */
+            color: var(--text-muted-color);
+            max-width: 60ch; /* from kaiser-four-11 */
+            margin-bottom: 20px; /* from kaiser-four-11 */
+        }
+        
+        .hero-cta-row {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* .cta-button is already styled globally in kaiser-four-03.html */
+        
+        .hero-ghost {
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg-color);
+            color: var(--text-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .hero-ghost:hover {
+            border-color: var(--accent-start);
+            color: var(--accent-start);
+            background: var(--secondary-color);
+        }
+        
+        #hero-3d-container {
+            /* This replaces the old #hero-3d-container */
+            flex: none; /* Remove old flex property */
+            width: 100%;
+            height: 440px; /* from kaiser-four-11 */
+            border-radius: 18px; /* from kaiser-four-11 */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+             /* Removed background, border, and backdrop-filter */
+            background: transparent;
+            /* border: 1px solid var(--border-color); */
+            /* backdrop-filter: blur(5px); */
+        }
+        
+        #hero-3d-canvas {
+            width: 100%;
+            height: 100%;
+            display: block; /* from kaiser-four-11 */
+            cursor: grab;
+        }
+        
+        /* Add animation */
+        .fadeInUp {
+            animation: fadeInUp .7s ease both;
+        }
+        @keyframes fadeInUp {
+            from { opacity:0; transform: translateY(14px);}
+            to { opacity:1; transform: translateY(0);}
+        }
+        /* === END OF INTEGRATED HERO STYLES === */
+
+
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; padding: 20px 0;
+            z-index: 1000; transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        header.scrolled {
+            background: rgba(255, 255, 255, 0.7); /* White glass */
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        body.dark-mode header.scrolled {
+            background: rgba(17, 24, 39, 0.7); /* Dark blue glass */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.6rem; font-weight: 700; color: var(--text-color); text-decoration: none; }
+        /* Use gradient for logo span */
+        .logo span {
+            background: linear-gradient(to right, var(--accent-start), var(--accent-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        nav ul { display: flex; list-style: none; align-items: center; }
+        nav ul li { margin-left: 35px; display: flex; align-items: center; }
+        nav ul li a { color: var(--text-color); text-decoration: none; font-weight: 500; transition: color 0.3s ease; }
+        /* Use gradient start for hover */
+        nav ul li a:hover { color: var(--accent-start); }
+
+        .cta-button {
+            /* Apply gradient background */
+            background-image: linear-gradient(to right, var(--accent-start), var(--accent-end));
+            color: white; /* White text on gradient */
+            padding: 12px 24px; border-radius: 8px; text-decoration: none;
+            font-weight: 600; transition: all 0.3s ease; box-shadow: 0 0 15px var(--accent-glow);
+             z-index: 10; /* Ensure button is clickable over 3D */
+        }
+        .cta-button:hover {
+            opacity: 0.9;
+            transform: translateY(-3px); box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .hamburger { display: none; cursor: pointer; }
+        .hamburger .bar { width: 25px; height: 3px; background-color: var(--text-color); margin: 4px 0; transition: 0.4s; }
+
+        #theme-toggle-btn {
+            background: transparent; border: 1px solid var(--border-color); color: var(--text-color);
+            width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; padding: 0; transition: all 0.3s ease;
+        }
+        #theme-toggle-btn:hover { border-color: var(--accent-start); color: var(--accent-start); }
+        #theme-toggle-btn svg { width: 18px; height: 18px; }
+        body.dark-mode #theme-toggle-btn .moon { display: none; }
+        body.dark-mode #theme-toggle-btn .sun { display: block; }
+        #theme-toggle-btn .sun { display: none; }
+        #theme-toggle-btn .moon { display: block; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        section {
+            padding: 100px 0; opacity: 0; transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out, background-color 0.3s ease;
+            background-color: transparent;
+        }
+        section:nth-of-type(even) { background-color: var(--secondary-color); }
+        section.visible { opacity: 1; transform: translateY(0); }
+        .section-title { font-size: 2.8rem; text-align: center; margin-bottom: 1.5rem; color: var(--text-color); }
+        .section-subtitle { text-align: center; color: var(--text-muted-color); margin-bottom: 5rem; max-width: 700px; margin-left: auto; margin-right: auto; font-size: 1.1rem;}
+
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .info-card {
+            background: var(--card-bg-color); padding: 2rem; border-radius: 10px;
+            border: 1px solid var(--border-color); backdrop-filter: blur(5px);
+            display: flex; flex-direction: column;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+        }
+        body.dark-mode .info-card { box-shadow: none; }
+        /* Use gradient start for icon */
+        .info-card .icon-placeholder { font-size: 2.5rem; color: var(--accent-start); margin-bottom: 1rem; } /* Class was .icon, changed to match HTML */
+        
+        /* === CSS FOR NEW IMAGES === */
+        .icon-placeholder-img {
+            width: 40px; /* w-10 */
+            height: 40px; /* h-10 */
+            object-fit: contain;
+        }
+
+        /* === NEW CSS FOR SERVICE VIDEOS === */
+.service-pane .service-video-container {
+    overflow: hidden; 
+    height: 18rem; /* This is the same as h-48 */
+    width: 100%;
+    border-radius: 0.5rem; /* This is the same as rounded-lg */
+    background-color: var(--secondary-color); /* Fallback bg while video loads */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+body.dark-mode .service-pane .service-video-container {
+    background-color: var(--input-bg-color); /* Darker fallback */
+}
+.service-pane-video {
+    width: 100%;
+    height: 100%; 
+    object-fit: cover; /* Fills the container, looks more premium */
+    transition: transform 0.4s ease;
+}
+.service-pane .service-video-container:hover .service-pane-video {
+    transform: scale(1.05); /* Subtle zoom on hover */
+}
+        .featured-img {
+            width: 100%;
+            height: 100%;
+            object-fit:contain;
+        }
+        .tech-logo-img {
+            height: 40px; /* Fixed height for logos */
+            object-fit: contain;
+            margin: 0 auto;
+            /* Apply a filter to blend with the theme */
+            filter: grayscale(1) opacity(0.6);
+            transition: filter 0.3s ease;
+        }
+        .tech-logo:hover .tech-logo-img {
+            filter: none; /* Show full color on hover */
+        }
+        .case-study-img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover; /* fill the placeholder while preserving aspect and cropping if needed */
+            border-radius: 0.5rem;
+        }
+
+        /* Make placeholder height adapt on small screens so images remain responsive */
+        @media (max-width: 768px) {
+            .case-study-placeholder { height: 14rem; }
+        }
+        .footer-icon-img {
+            width: 24px; /* Match other social icons */
+            height: 24px;
+            object-fit: contain;
+            filter: grayscale(1) opacity(0.7);
+            transition: filter 0.3s ease;
+        }
+        .social-links a:hover .footer-icon-img {
+            filter: none;
+        }
+        .footer-links .footer-icon-img {
+            width: 20px;
+            height: 20px;
+            filter: grayscale(1) opacity(0.7);
+        }
+        .footer-links li a:hover .footer-icon-img {
+             filter: none;
+        }
+         /* === END CSS FOR NEW IMAGES === */
+
+        .info-card h3 { font-size: 1.4rem; margin-bottom: 1rem; color: var(--text-color); }
+        .info-card p { color: var(--text-muted-color); flex-grow: 1; }
+
+        .process-timeline { display: flex; flex-direction: column; gap: 2rem; position: relative; max-width: 800px; margin: 0 auto; }
+        .process-timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: var(--border-color); }
+        .timeline-item { display: flex; align-items: flex-start; gap: 2rem; position: relative; padding-left: 50px; }
+        .timeline-dot {
+            position: absolute; left: 10px; top: 5px; width: 20px; height: 20px;
+            border-radius: 50%; background: var(--accent-start); /* Gradient start */
+            border: 3px solid var(--primary-color); transition: border-color 0.3s ease;
+        }
+        section:nth-of-type(even) .timeline-dot { border-color: var(--secondary-color); }
+        .timeline-content h3 { font-size: 1.5rem; color: var(--text-color); }
+        .timeline-content p { color: var(--text-muted-color); }
+
+        .tech-logos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2rem; }
+        .tech-logo {
+            background: var(--card-bg-color); padding: 1.5rem; border-radius: 10px;
+            border: 1px solid var(--border-color); text-align: center;
+            min-width: 150px; transition: all 0.3s ease;
+        }
+        .tech-logo:hover { transform: translateY(-5px); box-shadow: 0 5px 15px var(--accent-glow); }
+        .tech-logo span { font-weight: 500; }
+
+        .faq-item { background: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 1rem; overflow: hidden; transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .faq-question { padding: 1.5rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; font-size: 1.1rem; }
+        .faq-question::after { content: '+'; font-size: 1.5rem; transition: transform 0.3s ease; color: var(--accent-start); }
+        .faq-item.active .faq-question::after { transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out, padding 0.4s ease; color: var(--text-muted-color); }
+        .faq-answer p { padding: 0 1.5rem 1.5rem; }
+
+        .custom-form-container {
+            max-width: 700px; margin: 0 auto; background: var(--card-bg-color); padding: 2.5rem;
+            border-radius: 10px; border: 1px solid var(--border-color); backdrop-filter: blur(5px);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-muted-color); font-size: 0.9rem; }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 1rem; background-color: var(--input-bg-color);
+            border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color);
+            font-family: 'Poppins', sans-serif; font-size: 1rem; transition: all 0.3s ease;
+        }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--accent-start); box-shadow: 0 0 10px var(--accent-glow); }
+        .form-group textarea { resize: vertical; min-height: 120px; }
+        .submit-btn {
+            width: 100%; padding: 1rem; border: none; border-radius: 8px;
+            /* Apply gradient */
+            background-image: linear-gradient(to right, var(--accent-start), var(--accent-end));
+            color: white; /* White text */
+            font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+        }
+        .submit-btn:hover { opacity: 0.9; transform: translateY(-3px); box-shadow: 0 4px 20px var(--accent-glow); }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17, 24, 39, 0.7); /* Dark blue overlay */
+            backdrop-filter: blur(5px); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            background: var(--secondary-color); padding: 3rem; border-radius: 10px; border: 1px solid var(--border-color);
+            text-align: center; z-index: 2001; width: 90%; max-width: 450px; opacity: 0; pointer-events: none;
+            transition: all 0.3s ease-in-out;
+        }
+        .modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+        .modal-icon { color: var(--accent-start); font-size: 4rem; margin-bottom: 1rem; }
+        .modal h3 { font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-color); }
+        .modal p { color: var(--text-muted-color); margin-bottom: 2rem; }
+        .modal-close-btn { padding: 12px 30px; border: none; } /* Inherits cta-button styles */
+
+        footer { padding-top: 80px; text-align: left; background: var(--primary-color); border-top: 1px solid var(--border-color); transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2.5rem; margin-bottom: 4rem; }
+        .footer-column .logo { margin-bottom: 1rem; display: inline-block; }
+        .footer-column p { color: var(--text-muted-color); font-size: 0.9rem; max-width: 250px; }
+        .footer-column h4 { font-size: 1.1rem; color: var(--text-color); margin-bottom: 1.5rem; font-weight: 600; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 0.8rem; }
+        .footer-links a { color: var(--text-muted-color); text-decoration: none; transition: color 0.3s ease; font-size: 0.95rem; }
+        .footer-links a:hover { color: var(--accent-start); }
+        .social-links { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .social-links a { color: var(--text-muted-color); text-decoration: none; transition: color 0.3s ease; }
+        .social-links a:hover { color: var(--accent-start); }
+        .social-links svg { width: 24px; height: 24px; }
+        .footer-bottom { border-top: 1px solid var(--border-color); padding: 2rem 0; text-align: center; font-size: 0.9rem; color: var(--text-muted-color); }
+
+        .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 400px; } }
+
+        .icon-placeholder { width: 80px; height: 80px; border-radius: 50%; background-color: rgba(37, 99, 235, 0.1); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 500; color: var(--accent-start); margin: 0 auto 1.5rem; border: 2px dashed rgba(37, 99, 235, 0.3); font-family: monospace; }
+        body.dark-mode .icon-placeholder { background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3);}
+        .tech-logo-placeholder { width: 100%; height: 80px; border-radius: 0.5rem; background-color: var(--input-bg-color); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 500; color: var(--text-muted-color); border: 1px solid var(--border-color); transition: all 0.3s ease; }
+        .tech-logo-placeholder:hover { border-color: var(--accent-start); color: var(--accent-start); box-shadow: 0 5px 15px var(--accent-glow); transform: translateY(-3px); }
+        .testimonial-card { background-color: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 2rem; text-align: center; margin-top: 1rem; backdrop-filter: blur(5px); }
+        .testimonial-avatar-placeholder { width: 72px; height: 72px; border-radius: 50%; background-color: var(--input-bg-color); border: 1px solid var(--border-color); margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 600; color: var(--text-muted-color); } /* Tweaked font size */
+        .featured-placeholder { width: 100%; height: 500px; background-color: var(--secondary-color); color: var(--text-color); display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 1rem; font-size: 1.5rem; font-weight: 600; border: 2px dashed var(--accent-start); text-align: center; padding: 2rem; } /* Added padding */
+        .case-study-card { background-color: var(--card-bg-color); border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); transition: all 0.3s ease; backdrop-filter: blur(5px); }
+        .case-study-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-color: var(--accent-start); }
+        body.dark-mode .case-study-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .case-study-placeholder { width: 100%; height: 192px; background-color: var(--input-bg-color); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 500; color: var(--text-muted-color); border-bottom: 1px solid var(--border-color); }
+        .case-study-card .p-6 { padding: 1.5rem; }
+        .case-study-card h3 { font-size: 1.25rem; color: var(--text-color); font-weight: 600; margin: 0.5rem 0;}
+        .case-study-card p:first-of-type { color: var(--accent-start); /* Gradient start for category */}
+        .case-study-card p:last-of-type { color: var(--text-muted-color); }
+        .filter-btn { padding: 8px 20px; border-radius: 9999px; background-color: var(--input-bg-color); color: var(--text-muted-color); transition: all 0.3s ease; font-weight: 500; border: 1px solid var(--border-color); cursor: pointer; }
+        .filter-btn:hover { background-color: var(--secondary-color); color: var(--text-color); }
+        .filter-btn.active { background-image: linear-gradient(to right, var(--accent-start), var(--accent-end)); color: white; border-color: transparent; }
+        #service-tabs .service-tab { cursor: pointer; padding: 0.75rem 1rem; border-left: 4px solid transparent; color: var(--text-muted-color); transition: all 0.3s ease; }
+        #service-tabs .service-tab.active { border-left-color: var(--accent-start); color: var(--text-color); font-weight: 600; background-color: rgba(37, 99, 235, 0.05); } /* Light blue bg */
+        body.dark-mode #service-tabs .service-tab.active { background-color: rgba(59, 130, 246, 0.08); }
+
+
+        /* === START OF INTEGRATED HERO MEDIA QUERIES === */
+        @media (max-width: 1100px) {
+            .hero-inner { grid-template-columns: 1fr 420px; gap: 28px; }
+        }
+
+        @media (max-width: 992px) {
+            #hero .container { text-align: center; }
+            .hero-inner {
+                grid-template-columns: 1fr; /* from kaiser-four-11 */
+                text-align: center;
+            }
+            .fadeInUp { /* This is the new content block */
+                order: 2; /* Match old .hero-content order */
+                max-width: 100%;
+                margin-bottom: 2rem;
+                padding: 1.5rem; /* Match old .hero-content padding - KEPT FOR MOBILE */
+            }
+            #hero-3d-container {
+                width: 100%;
+                max-width: 400px;
+                height: 320px; /* from kaiser-four-11 media query */
+                order: 1;
+            }
+            h1.hero-title { font-size: 2.8rem; } /* Match old h1 size */
+        }
+        /* === END OF INTEGRATED HERO MEDIA QUERIES === */
+        
+        @media (max-width: 768px) {
+            h1.hero-title { font-size: 2.5rem; } /* Match old h1 size */
+            .section-title { font-size: 2rem; }
+            nav ul {
+                display: none; flex-direction: column; position: absolute;
+                top: 75px; left: 0; width: 100%; background: var(--primary-color);
+                backdrop-filter: blur(10px); padding: 1rem 0;
+                border-bottom: 1px solid var(--border-color);
+            }
+            body.dark-mode nav ul { background: rgba(17, 24, 39, 0.95); /* Dark Blue Glass */ }
+            nav ul.active { display: flex; }
+            nav ul li { margin: 1rem 0; text-align: center; margin-left: 0; justify-content: center; }
+            .hamburger { display: flex; flex-direction: column; }
+            .footer-grid { text-align: center; }
+            .footer-column p { margin: 0 auto; }
+            .social-links { justify-content: center; }
+            #service-tabs { display: flex; overflow-x: auto; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;}
+             #service-tabs .service-tab { border-left: none; border-bottom: 4px solid transparent; text-align: center; white-space: nowrap; flex-shrink: 0; }
+             #service-tabs .service-tab.active { border-bottom-color: var(--accent-start); border-left: none; background: none; }
+        }
+
+    </style>
+</head>
+<body class="antialiased"> <canvas id="particle-canvas"></canvas>
+
+    <header id="main-header">
+        <nav class="container">
+            <a href="#hero" class="logo">Kaiser<span>3DWeb</span></a>
+            <div class="nav-links hidden md:flex"> <ul>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#process">Process</a></li>
+                    <li><a href="#expertise">Expertise</a></li>
+                    <li><a href="#work">Our Work</a></li>
+                    <li><a href="#contact" class="cta-button">Start Your Project</a></li>
+                    <li>
+                        <button id="theme-toggle-btn" aria-label="Toggle light/dark theme">
+                           <svg class="sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 18a6 6 0 100-12 6 6 0 000 12z"></path></svg>
+                           <svg class="moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="hamburger md:hidden"> <span class="bar"></span> <span class="bar"></span> <span class="bar"></span>
+            </div>
+        </nav>
+        <ul class="nav-links-mobile hidden flex-col items-center py-4 bg-[var(--primary-color)] md:hidden absolute w-full left-0 top-[75px] border-b border-[var(--border-color)] shadow-md">
+           <li><a href="#services">Services</a></li>
+           <li><a href="#process">Process</a></li>
+           <li><a href="#expertise">Expertise</a></li>
+           <li><a href="#work">Our Work</a></li>
+           <li class="mt-4"><a href="#contact" class="cta-button">Start Your Project</a></li>
+            <li class="mt-4">
+                <button id="theme-toggle-btn-mobile" aria-label="Toggle light/dark theme" class="w-10 h-10 rounded-full border border-[var(--border-color)] flex items-center justify-center">
+                    <svg class="sun w-5 h-5 text-[var(--text-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 18a6 6 0 100-12 6 6 0 000 12z"></path></svg>
+                    <svg class="moon w-5 h-5 text-[var(--text-color)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </li>
+        </ul>
+    </header>
+
+    <main>
+         <section id="hero" aria-label="Hero">
+            <div class="container">
+              <div class="hero-inner">
+                <div class="fadeInUp">
+                  <div class="hero-eyebrow">IMMERSIVE 3D · WEB AR · CONFIGURATORS</div>
+                  <h1 class="hero-title">
+                    Turn Browsers into <span class="accent">Showrooms</span><br>
+                    — Sell With Spatial Confidence
+                  </h1>
+                  <p class="hero-lead">We craft cinematic, interactive 3D experiences that scale — from realtime product configurators to app-less WebAR. Fast prototypes, elegant UI, measurable ROI.</p>
+      
+                  <div class="hero-cta-row">
+                    <a class="cta-button" href="#contact">Start Your Project</a>
+                    <a class="hero-ghost" href="#work">See Case Studies</a>
+                  </div>
+      
+                  <div style="margin-top:18px; max-width:680px; display:flex; gap:12px; align-items:center;">
+                    <div style="display:flex; gap:8px; align-items:center;">
+                      <div style="width:36px; height:36px; border-radius:10px; background:linear-gradient(90deg,var(--accent-start),var(--accent-end)); color:white; display:flex; align-items:center; justify-content:center; font-weight:800; box-shadow: var(--accent-glow);">★</div>
+                      <div style="font-size:0.95rem; color:var(--text-muted-color)"><strong style="color:var(--text-color)">Avg. 40%+</strong> conversion lift (measured)</div>
+                    </div>
+                  </div>
+                </div>
+      
+                <div id="hero-3d-container" role="img" aria-label="Live 3D demo" class="fadeInUp">
+                  <canvas id="hero-3d-canvas" width="560" height="440"></canvas>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section id="services">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="section-title">Our 3D Web Services</h2>
+                    <p class="section-subtitle">From configurators to virtual worlds, we build it all.</p>
+                </div>
+                <div class="flex flex-col md:flex-row -mx-4">
+                     <div class="w-full md:w-1/3 px-4 mb-8 md:mb-0">
+                        <ul id="service-tabs">
+                            <li class="service-tab active" data-tab="1">3D Product Configurators</li>
+                            <li class="service-tab" data-tab="2">Virtual Showrooms & Tours</li>
+                            <li class="service-tab" data-tab="3">Interactive WebGL Experiences</li>
+                            <li class="service-tab" data-tab="4">Web AR Integration</li>
+                        </ul>
+                    </div>
+                     
+                    <div class="w-full md:w-2/3 px-4">
+                        <div id="service-content">
+                            <div class="service-pane active" data-pane="1">
+                                <h3 class="text-2xl font-bold mb-4">3D Product Configurators</h3>
+                                <p class="mb-4">Empower your customers. We build lightning-fast 3D configurators that allow users to customize products in real-time, from colors and textures to accessories and features. Perfect for e-commerce, automotive, and fashion.</p>
+                                <div class="service-video-container">
+                                    <video class="service-pane-video" autoplay loop muted playsinline poster="/11.png">
+                                        <source src="./D_Product_Configurator_Video_Creation.mp4" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+                            
+                            <div class="service-pane hidden" data-pane="2">
+                                <h3 class="text-2xl font-bold mb-4">Virtual Showrooms & Tours</h3>
+                                <p class="mb-4">Create immersive digital spaces. We design and develop virtual showrooms, art galleries, and real estate tours that users can explore from any device. Engage clients with interactive, 24/7 accessible environments.</p>
+                                <div class="service-video-container">
+                                    <video class="service-pane-video" autoplay loop muted playsinline poster="/25.png">
+                                        <source src="./D_Virtual_Showroom_Video_Generated.mp4" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+
+                            <div class="service-pane hidden" data-pane="3">
+                                <h3 class="text-2xl font-bold mb-4">Interactive WebGL Experiences</h3>
+                                <p class="mb-4">Push the boundaries of branding. We create bespoke WebGL sites, data visualizations, and gamified experiences that tell your brand's story in a truly unforgettable way. If you can dream it, we can build it in the browser.</p>
+                                <div class="service-video-container">
+                                    <video class="service-pane-video" autoplay loop muted playsinline poster="9.png">
+                                        <source src="./Creating_Interactive_D_WebGL_Video.mp4" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+
+                            <div class="service-pane hidden" data-pane="4">
+                                <h3 class="text-2xl font-bold mb-4">Web AR Integration</h3>
+                                <p class="mb-4">Bring your products into your customer's world. We integrate markerless Web AR, allowing users to place 3D models of your products in their own space using just their phone's camera—no app download required.</p>
+                                <div class="service-video-container">
+                                    <video class="service-pane-video" autoplay loop muted playsinline poster="/22.png">
+                                        <source src="./Web-AR-Integration.mp4" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </D>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="process">
+            <div class="container mx-auto px-6">
+                 <h2 class="section-title">Our Immersive Development Process</h2>
+                 <p class="section-subtitle">A streamlined workflow for creating world-class 3D web apps.</p>
+                <div class="process-timeline">
+                    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content">
+                        <h3>1. Discovery & 3D Strategy</h3>
+                        <p>We align on your KPIs, target audience, and technical needs to define a clear strategy for your 3D experience.</p>
+                    </div></div>
+                    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content">
+                        <h3>2. 3D Modeling & Asset Creation</h3>
+                        <p>Our artists create photorealistic, low-poly 3D models optimized for blazing-fast web performance.</p>
+                    </div></div>
+                    <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content">
+                         <h3>3. Agile Development & Integration</h3>
+                        <p>Using Three.js and React Three Fiber, we build the interactive experience in sprints, integrating with your existing stack.</p>
+                    </div></div>
+                     <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content">
+                         <h3>4. Optimization & Launch</h3>
+                        <p>We obsess over performance, ensuring rapid load times and a smooth 60fps experience on all devices.</p>
+                    </div></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="expertise">
+             <div class="container mx-auto px-6">
+                <h2 class="section-title">Our Expertise</h2>
+                 <p class="section-subtitle">Why leading brands choose Kaiser3DWeb.</p>
+                 <div class="info-grid">
+                     <div class="info-card">
+                        <div class="icon-placeholder">
+                             <img src="./36.png" alt="Photorealistic Quality" class="icon-placeholder-img">
+                        </div>
+                        <h3>Photorealistic Quality</h3>
+                        <p>We combine advanced 3D artistry with cutting-edge shading techniques (PBR) to deliver visuals that are indistinguishable from reality.</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="icon-placeholder">
+                             <img src="./37.png" alt="Performance Obsessed" class="icon-placeholder-img">
+                        </div>
+                        <h3>Performance Obsessed</h3>
+                        <p>A beautiful 3D site is useless if it's slow. We are experts in 3D asset optimization (Draco, GLTF) to ensure instant loads and smooth frame rates.</p>
+                    </div>
+                    <div class="info-card">
+                         <div class="icon-placeholder">
+                             <img src="./38.png" alt="Multi-platform Ready" class="icon-placeholder-img">
+                         </div>
+                        <h3>Multi-platform Ready</h3>
+                        <p>Our experiences work flawlessly across all devices—from 4K desktops to mobile phones and even VR/AR headsets (WebXR).</p>
+                    </div>
+                 </div>
+            </div>
+        </section>
+
+        <section id="tech-stack">
+             <div class="container mx-auto px-6">
+                 <h2 class="section-title">Our 3D Tech Stack</h2>
+                <p class="section-subtitle">We leverage the most advanced tools to build powerful solutions.</p>
+                <div class="tech-logos">
+                     <div class="tech-logo"><img src="./16.png" alt="React" class="tech-logo-img"></div>
+                     <div class="tech-logo"><img src="./17.png" alt="Shopify" class="tech-logo-img"></div>
+                     <div class="tech-logo"><img src="./12.png" alt="WooCommerce" class="tech-logo-img"></div>
+                     <div class="tech-logo"><img src="./14.png" alt="Webflow" class="tech-logo-img"></div>
+                     <div class="tech-logo"><img src="./15.png" alt="Vercel" class="tech-logo-img"></div>
+                     <div class="tech-logo"><img src="./13.png" alt="WebGL" class="tech-logo-img"></div>
+                </div>
+                </div>
+        </section>
+
+         <section id="impact-chart">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                     <h2 class="section-title">Measurable 3D Impact</h2>
+                    <p class="section-subtitle">Our experiences aren't just stunning. They deliver real metrics.</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="impactChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="featured-experience">
+             <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                     <h2 class="section-title">Featured 3D Experience</h2>
+                    <p class="section-subtitle">Interact with our latest creation live in your browser.</p>
+                 </div>
+                <div class="featured-placeholder">
+                   
+                    <video class="featured-video" autoplay loop muted playsinline poster="/26.png">
+                        <source src="./car-assembling.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </section>
+
+        <section id="work">
+             <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                     <h2 class="section-title">Explore Our Work</h2>
+                     <p class="section-subtitle">See how we've helped businesses like yours succeed.</p>
+                </div>
+                 <div class="flex flex-wrap justify-center space-x-2 md:space-x-4 mb-8" id="filter-buttons">
+                    <button class="filter-btn active mb-2" data-filter="all">All</button>
+                    <button class="filter-btn mb-2" data-filter="ecommerce">E-commerce</button>
+                    <button class="filter-btn mb-2" data-filter="automotive">Automotive</button>
+                    <button class="filter-btn mb-2" data-filter="real-estate">Real Estate</button>
+                </div>
+                <div id="case-study-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="case-study-card" data-category="ecommerce">
+                        <div class="case-study-placeholder">
+                             <img src="./27.png" alt="Aura Home Sofa" class="case-study-img">
+                        </div>
+                        <div class="p-6">
+                            <p class="text-sm font-semibold mb-1" style="color: var(--accent-start);">E-commerce</p>
+                            <h3>Aura Home Furniture Configurator</h3>
+                            <p>A real-time 3D configurator that led to a 40% increase in conversion rates and a 25% drop in returns.</p>
+                        </div>
+                    </div>
+                     <div class="case-study-card" data-category="automotive">
+                        <div class="case-study-placeholder">
+                             <img src="./2.png" alt="AutoVerse EV" class="case-study-img">
+                        </div>
+                        <div class="p-6">
+                            <p class="text-sm font-semibold mb-1" style="color: var(--accent-start);">Automotive</p>
+                            <h3>AutoVerse EV Launchpad</h3>
+                            <p>An immersive WebGL experience to launch a new EV, driving 90% user engagement and 3x time-on-site.</p>
+                        </div>
+                    </div>
+                     <div class="case-study-card" data-category="real-estate">
+                         <div class="case-study-placeholder">
+                             <img src="./22.png" alt="Elysian Properties Chair" class="case-study-img">
+                        </div>
+                         <div class="p-6">
+                            <p class="text-sm font-semibold mb-1" style="color: var(--accent-start);">Real Estate</p>
+                            <h3>Elysian Properties Virtual Tour</h3>
+                            <p>A multi-user virtual tour that accelerated off-plan sales by 60% and expanded international reach.</p>
+                        </div>
+                    </div>
+                     <div class="case-study-card" data-category="ecommerce">
+                        <div class="case-study-placeholder">
+                             <img src="./7.png" alt="Kinetix Wear Sneaker" class="case-study-img">
+                        </div>
+                        <div class="p-6">
+                             <p class="text-sm font-semibold mb-1" style="color: var(--accent-start);">E-commerce</p>
+                             <h3>Kinetix Wear Web AR Try-On</h3>
+                             <p>An app-less AR "try-on" feature that increased purchase confidence and reduced product returns by 22%.</p>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </section>
+
+         <section id="testimonials">
+             <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                     <h2 class="section-title">What Our Clients Say</h2>
+                    <p class="section-subtitle">We're proud to build partnerships built on trust and results.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <div class="testimonial-card">
+                        <div class="testimonial-avatar-placeholder"><span>AD</span></div>
+                        <p class="italic mb-4">"The 3D configurator Kaiser3DWeb built is the centerpiece of our e-commerce strategy. Our conversion rates have never been higher, and returns are way down."</p>
+                        <h4 class="font-bold">Anna Duval</h4>
+                        <p class="text-sm">Head of E-commerce, Aura Home</p>
+                    </div>
+                     <div class="testimonial-card">
+                        <div class="testimonial-avatar-placeholder"><span>MS</span></div>
+                        <p class="italic mb-4">"Their team's obsession with performance and photorealism is unmatched. They delivered a WebGL experience that wowed our audience and our engineers."</p>
+                        <h4 class="font-bold">Marcus Shaw</h4>
+                        <p class="text-sm">Marketing Director, AutoVerse</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="container">
+                <h2 class="section-title">Ready to Build Your 3D Future?</h2>
+                <p class="section-subtitle">Let's talk. We can provide a complimentary consultation, audit your existing assets, and give you a clear, actionable plan to increase your sales with 3D.</p>
+                <div class="custom-form-container">
+                    <form id="contact-form" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeqzn6AtgkTdP_od3C8ZO5ExDyzYrlNVA1LgXWsEGuwW-GNhA/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
+                        <div class="form-group">
+                            <label for="fullName">Full name</label>
+                            <input type="text" id="fullName" name="entry.934952894" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="entry.822053109" placeholder="your.email@company.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone (optional)</label>
+                            <input type="tel" id="phone" name="entry.1274582004" placeholder="+1 (555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label for="comments">Tell us about your project</label>
+                            <textarea id="comments" name="entry.1038882302" placeholder="Describe your product, customization needs, or goals..."></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Request consultation</button>
+                    </form>
+                    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { showModal(); }"></iframe>
+                    </div>
+            </div>
+        </section>
+    </main>
+
+     <div id="submission-modal-overlay" class="modal-overlay"></div>
+    <div id="submission-modal" class="modal">
+        <div class="modal-icon">
+             <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </svg>
+        </div>
+        <h3>Thanks — message received!</h3>
+        <p>We’ll reply within 1-2 business days.</p> 
+        <!-- If urgent, email <a href="mailto:hello@kaiser3dweb.com" style="color: var(--accent-start);">hello@kaiser3dweb.com</a>.</p> -->
+        <button id="modal-close-btn" class="cta-button modal-close-btn">Close</button>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                 <div class="footer-column">
+                    <a href="#hero" class="logo">Kaiser<span>3DWeb</span></a>
+                    <p>Transforming digital commerce with immersive, high-performance 3D and AR experiences.</p>
+                    <div class="social-links">
+                         <a href="#" aria-label="LinkedIn"><img src="./34.png" alt="LinkedIn" class="footer-icon-img"></a>
+                        <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg></a>
+                        <a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z"></path></svg></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Navigate</h4>
+                    <ul class="footer-links">
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#process">Process</a></li>
+                        <li><a href="#expertise">Expertise</a></li>
+                         <li><a href="#work">Our Work</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                 <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="#services">3D Product Configurators</a></li>
+                        <li><a href="#services">Virtual Showrooms</a></li>
+                        <li><a href="#services">Interactive WebGL</a></li>
+                        <li><a href="#services">Web AR Integration</a></li>
+                    </ul>
+                </div>
+                 <div class="footer-column">
+                    <h4>Contact Us</h4>
+                    <ul class="footer-links">
+                        <!-- <li><a href="mailto:hello@kaiser3dweb.com">hello@kaiser3dweb.com</a></li> -->
+                         <li><a href="tel:+15551234567" style="display: flex; align-items: center; gap: 8px;">
+                            <img src="./35.png" alt="Phone" class="footer-icon-img">
+                            +1 (951) 441-9719
+                        </a></li>
+                        <li><a href="#contact">Request a Consultation</a></li>
+                         <li><a href="#">Privacy Policy</a></li>
+                         <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+             <div class="footer-bottom">
+                 &copy; 2025 Kaiser3DWeb. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let submitted = false; // Google Form submission flag
+
+        function showModal() {
+            document.getElementById('submission-modal-overlay').classList.add('active');
+            document.getElementById('submission-modal').classList.add('active');
+            document.getElementById('contact-form').reset();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            const themeToggleBtnMobile = document.getElementById('theme-toggle-btn-mobile'); // Added mobile button
+            const bodyEl = document.body;
+
+            function applyTheme(theme) {
+                const isDarkMode = theme === 'dark';
+                bodyEl.classList.toggle('dark-mode', isDarkMode);
+                localStorage.setItem('theme', theme);
+
+                // Define colors based on theme
+                const newObjectColor = isDarkMode ? 0xF9FAFB : 0x111827; // Light gray : Dark Blue/Gray
+                const newParticleColor = isDarkMode ? 0x67E8F9 : 0x2563EB; // Light Cyan : Blue-600
+                const newLightColor = isDarkMode ? 0x3B82F6 : 0x22D3EE; // Blue-500 : Cyan-400
+
+                // Update Three.js materials
+                if (window.heroMaterial) window.heroMaterial.color.setHex(newObjectColor);
+                if (window.particleMaterial) window.particleMaterial.color.setHex(newParticleColor);
+                if (window.heroPointLight) window.heroPointLight.color.setHex(newLightColor);
+            }
+
+            function toggleTheme() {
+                 const newTheme = bodyEl.classList.contains('dark-mode') ? 'light' : 'dark';
+                 applyTheme(newTheme);
+            }
+
+             // Load saved theme or detect preference
+            let savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            applyTheme(savedTheme); // Apply theme before initializing 3D
+
+            if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+            if(themeToggleBtnMobile) themeToggleBtnMobile.addEventListener('click', toggleTheme); // Added listener for mobile
+
+
+            // Header Scroll & Mobile Menu
+            const header = document.getElementById('main-header');
+            window.addEventListener('scroll', () => {
+                if (header) header.classList.toggle('scrolled', window.scrollY > 50);
+            });
+            const hamburger = document.querySelector('.hamburger');
+            const navMenuMobile = document.querySelector('.nav-links-mobile'); // Target mobile menu specifically
+            if(hamburger && navMenuMobile) {
+                hamburger.addEventListener('click', () => navMenuMobile.classList.toggle('hidden'));
+                 // Close mobile menu when a link inside it is clicked
+                 navMenuMobile.querySelectorAll('a').forEach(link => {
+                     link.addEventListener('click', () => navMenuMobile.classList.add('hidden'));
+                 });
+            }
+
+
+            // Section Visibility Observer
+            const sections = document.querySelectorAll('section:not(#hero)');
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) entry.target.classList.add('visible');
+                    });
+                }, { threshold: 0.1 });
+                sections.forEach(section => observer.observe(section));
+            } else {
+                 // Fallback for older browsers
+                 sections.forEach(section => section.classList.add('visible'));
+            }
+             const heroSection = document.querySelector('#hero');
+             if(heroSection) heroSection.classList.add('visible');
+
+
+            // FAQ Accordion
+            const faqItems = document.querySelectorAll('.faq-item');
+             if(faqItems.length > 0){
+                faqItems.forEach(item => {
+                    const question = item.querySelector('.faq-question');
+                     if(question){
+                        question.addEventListener('click', () => {
+                            const isActive = item.classList.contains('active');
+                            faqItems.forEach(i => {
+                                i.classList.remove('active');
+                                const ans = i.querySelector('.faq-answer');
+                                if(ans) ans.style.maxHeight = '0px';
+                            });
+                            if (!isActive) {
+                                item.classList.add('active');
+                                const answer = item.querySelector('.faq-answer');
+                                if(answer) answer.style.maxHeight = answer.scrollHeight + 'px';
+                            }
+                        });
+                     }
+                });
+            }
+
+
+            // Form Modal Logic
+            const modalOverlay = document.getElementById('submission-modal-overlay');
+            const modal = document.getElementById('submission-modal');
+            const closeModalBtn = document.getElementById('modal-close-btn');
+
+            function closeModal() {
+                 if(modalOverlay && modal){
+                    modalOverlay.classList.remove('active');
+                    modal.classList.remove('active');
+                }
+            }
+            if(closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+            if(modalOverlay) modalOverlay.addEventListener('click', closeModal);
+
+
+            // Chart.js
+             const ctx = document.getElementById('impactChart');
+             if (ctx && typeof Chart !== 'undefined') { // Check if Chart.js is loaded
+                new Chart(ctx.getContext('2d'), {
+                     type: 'bar',
+                     data: {
+                        labels: ['Conversion Rate Lift', 'User Engagement Time', 'Purchase Confidence', 'Brand Recall'],
+                        datasets: [{ label: 'Avg. Client Metric Lift %', data: [40, 90, 60, 75], backgroundColor: [ 'rgba(37, 99, 235, 0.6)', 'rgba(34, 211, 238, 0.6)', 'rgba(37, 99, 235, 0.4)', 'rgba(34, 211, 238, 0.4)'], borderColor: [ '#2563EB', '#22D3EE', '#60A5FA', '#67E8F9'], borderWidth: 1 }]
+                     },
+                     options: {
+                        responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'var(--border-color)' }, ticks: { callback: function(value) { return value + '%'; }, color: 'var(--text-muted-color)'} }, x: { grid: { display: false }, ticks: { color: 'var(--text-muted-color)' } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.parsed.y + '%'; } } } }
+                    }
+                 });
+            }
+
+            // Service Tabs
+            const serviceTabs = document.querySelectorAll('.service-tab');
+            const servicePanes = document.querySelectorAll('.service-pane');
+             if(serviceTabs.length > 0 && servicePanes.length > 0) {
+                serviceTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabNumber = tab.dataset.tab;
+                        serviceTabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        servicePanes.forEach(pane => {
+                            pane.classList.toggle('hidden', pane.dataset.pane !== tabNumber);
+                            pane.classList.toggle('active', pane.dataset.pane === tabNumber);
+                        });
+                    });
+                });
+            }
+
+            // Work Filter
+             const filterButtons = document.querySelectorAll('.filter-btn');
+             const caseStudyCards = document.querySelectorAll('.case-study-card');
+             if(filterButtons.length > 0 && caseStudyCards.length > 0) {
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const filter = button.dataset.filter;
+                        filterButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        caseStudyCards.forEach(card => {
+                            card.style.display = (filter === 'all' || card.dataset.category === filter) ? 'block' : 'none';
+                        });
+                    });
+                });
+            }
+
+
+            // Three.js Logic
+            if (typeof THREE !== 'undefined') {
+                let particleScene, particleCamera, particleRenderer, particles;
+
+                function initParticles() {
+                    const canvas = document.getElementById('particle-canvas');
+                    if (!canvas) return;
+                    particleScene = new THREE.Scene();
+                    particleCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                    particleCamera.position.z = 5;
+                    particleRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+                    particleRenderer.setSize(window.innerWidth, window.innerHeight);
+
+                    const particleCount = 5000;
+                    const pGeometry = new THREE.BufferGeometry();
+                    const positions = new Float32Array(particleCount * 3);
+                    for (let i = 0; i < particleCount; i++) {
+                        positions[i * 3] = (Math.random() - 0.5) * 15;
+                        positions[i * 3 + 1] = (Math.random() - 0.5) * 15;
+                        positions[i * 3 + 2] = (Math.random() - 0.5) * 15;
+                    }
+                    pGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                    
+                    const isDarkMode = document.body.classList.contains('dark-mode');
+                    const particleColor = isDarkMode ? 0x67E8F9 : 0x2563EB; // Cyan-300 : Blue-600
+                    
+                    const pMaterial = new THREE.PointsMaterial({
+                        color: particleColor, size: 0.015, transparent: true,
+                        blending: THREE.AdditiveBlending, depthWrite: false
+                    });
+                    
+                    window.particleMaterial = pMaterial;
+                    particles = new THREE.Points(pGeometry, pMaterial);
+                    particleScene.add(particles);
+                }
+
+                let heroScene, heroCamera, heroRenderer, mesh, targetScale, isMorphing;
+                let currentShapeIndex = 0, lastSwitchTime = 0;
+                const switchInterval = 4;
+
+                function initHeroObject() {
+                    const container = document.getElementById('hero-3d-container');
+                    const canvas = document.getElementById('hero-3d-canvas');
+                    if (!container || !canvas) return;
+
+                    heroScene = new THREE.Scene();
+                    // Use new camera settings from kaiser-four-11.html for hero
+                    heroCamera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+                    heroCamera.position.z = 3.4; // from kaiser-four-11
+                    heroRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+                    heroRenderer.setSize(container.clientWidth, container.clientHeight);
+                    heroRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                    heroScene.add(new THREE.AmbientLight(0xffffff, 0.6)); // from kaiser-four-11
+
+                    const isDarkMode = document.body.classList.contains('dark-mode');
+                    const lightColor = isDarkMode ? 0x3B82F6 : 0x22D3EE; // Blue-500 : Cyan-400
+                    const objectColor = isDarkMode ? 0xF9FAFB : 0x111827; // Light Gray : Dark Blue/Gray
+
+                    const pointLight = new THREE.PointLight(lightColor, 2.5, 30); // Use 2.5 intensity
+                    pointLight.position.set(5, 5, 5);
+                    heroScene.add(pointLight);
+                    window.heroPointLight = pointLight;
+
+                    // Use new geometry settings from kaiser-four-11
+                    const size = 1.45;
+                    const geometries = [
+                        new THREE.BoxGeometry(size, size, size, 12, 12, 12),
+                        new THREE.SphereGeometry(size / 1.35, 32, 32),
+                        new THREE.TorusKnotGeometry(size / 1.9, size / 8, 120, 24),
+                        new THREE.IcosahedronGeometry(size / 1.5, 1)
+                    ];
+                    
+                    const material = new THREE.MeshStandardMaterial({
+                        color: objectColor, metalness: 0.4, roughness: 0.25, wireframe: true, // Use new material settings
+                    });
+                    window.heroMaterial = material;
+                    
+                    mesh = new THREE.Mesh(geometries[currentShapeIndex], material);
+                    heroScene.add(mesh);
+                    targetScale = new THREE.Vector3(1, 1, 1);
+                    isMorphing = false; // Flag to prevent re-triggering
+
+                    container.addEventListener('pointermove', (event) => {
+                        if (!mesh) return;
+                        const rect = container.getBoundingClientRect();
+                        const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                        const y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
+                        // Use new rotation factors from kaiser-four-11
+                        mesh.rotation.y += (x * 0.6 - mesh.rotation.y) * 0.08;
+                        mesh.rotation.x += (y * 0.6 - mesh.rotation.x) * 0.08;
+                    });
+
+                    // Use new switchShape logic (based on time)
+                    window.switchShape = () => {
+                        if (!mesh) return;
+                        try {
+                            const nextIdx = Math.floor(clock.getElapsedTime() / switchInterval) % geometries.length;
+                            if (nextIdx !== currentShapeIndex) {
+                                currentShapeIndex = nextIdx;
+                                mesh.geometry.dispose();
+                                mesh.geometry = geometries[currentShapeIndex];
+                            }
+                        } catch(e) {
+                            console.error("Error switching shape:", e);
+                        }
+                    };
+                }
+
+                const clock = new THREE.Clock();
+                function animate() {
+                    requestAnimationFrame(animate);
+                    const elapsedTime = clock.getElapsedTime();
+
+                    if (particles && particleRenderer && particleScene && particleCamera) {
+                        particles.rotation.y = elapsedTime * 0.1; // Use 0.1 factor from original
+                        particleRenderer.render(particleScene, particleCamera);
+                    }
+
+                    if (mesh && heroRenderer && heroScene && heroCamera) {
+                        mesh.rotation.z += 0.0016; // Use new rotation factor
+                        // mesh.scale.lerp(targetScale, 0.08); // Remove old morphing logic
+                        
+                        // Use new time-based switching
+                        if (elapsedTime - lastSwitchTime > switchInterval) {
+                           if(window.switchShape) window.switchShape();
+                           lastSwitchTime = elapsedTime; // Reset timer
+                        }
+                        heroRenderer.render(heroScene, heroCamera);
+                    }
+                }
+
+                function onWindowResize() {
+                    if (particleCamera && particleRenderer) {
+                        particleCamera.aspect = window.innerWidth / window.innerHeight;
+                        particleCamera.updateProjectionMatrix();
+                        particleRenderer.setSize(window.innerWidth, window.innerHeight);
+                    }
+                    if (heroCamera && heroRenderer) {
+                        const container = document.getElementById('hero-3d-container');
+                         if(container){
+                            heroCamera.aspect = container.clientWidth / container.clientHeight;
+                            heroCamera.updateProjectionMatrix();
+                            heroRenderer.setSize(container.clientWidth, container.clientHeight);
+                        }
+                    }
+                }
+                
+                window.addEventListener('resize', onWindowResize);
+                
+                initParticles();
+                initHeroObject();
+                animate();
+            }
+
+        });
+    </script>
+</body>
+</html>

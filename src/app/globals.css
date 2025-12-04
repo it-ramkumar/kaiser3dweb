@@ -1,26 +1,49 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* LIGHT MODE */
+  --primary-color: #FFFFFF;         /* Background: White */
+  --secondary-color: #F8FAFC;       /* Light Slate */
+  --card-bg-color: rgba(255, 255, 255, 0.9);
+  --border-color: #E2E8F0;
+  
+  --text-color: #0F172A;            /* Text: Deep Dark Slate (Readable) */
+  --text-muted-color: #475569;      /* Muted: Medium Slate */
+  --input-bg-color: #F1F5F9;
+
+  --accent-start: #2563EB;
+  --accent-end: #06B6D4;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+.dark {
+  /* DARK MODE */
+  --primary-color: #020617;         /* Background: Deep Black */
+  --secondary-color: #0F172A;       /* Dark Slate */
+  --card-bg-color: rgba(30, 41, 59, 0.7); /* Translucent Slate */
+  --border-color: #1E293B;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --text-color: #F8FAFC;            /* Text: Bright White (High Contrast) */
+  --text-muted-color: #CBD5E1;      /* Muted: Light Gray (Readable) */
+  --input-bg-color: #1E293B;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-family: var(--font-poppins), sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-start to-accent-end;
+  }
+  .accent-bg {
+    @apply bg-gradient-to-r from-accent-start to-accent-end text-white;
+  }
+  .glass-card {
+    @apply bg-card backdrop-blur-md border border-border shadow-xl;
+  }
 }
