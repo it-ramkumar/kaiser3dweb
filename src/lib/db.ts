@@ -1,10 +1,7 @@
 import mongoose from 'mongoose';
 
+// Do not throw errors at the top level!
 const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-}
 
 let cached = (global as any).mongoose;
 
@@ -13,8 +10,14 @@ if (!cached) {
 }
 
 async function connectDB() {
+  // 1. Check if variable exists INSIDE the function
+  if (!MONGODB_URI) {
+    throw new Error(
+      'Please define the MONGODB_URI environment variable inside .env.local or AWS Console'
+    );
+  }
+
   if (cached.conn) {
-    console.log('✓ Database already connected');
     return cached.conn;
   }
 
@@ -23,8 +26,7 @@ async function connectDB() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
-      console.log('✓ Database connected successfully');
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       return mongoose;
     });
   }
@@ -33,7 +35,7 @@ async function connectDB() {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
-    console.error('✗ Database connection failed:', e);
+    console.error("MongoDB Connection Error:", e); // Log the real error to CloudWatch
     throw e;
   }
 
