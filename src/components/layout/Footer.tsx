@@ -29,9 +29,9 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-primary mb-6">Explore</h4>
             <ul className="space-y-4 text-muted">
-              <li><Link href="#services" className="hover:text-accent-start transition">Services</Link></li>
-              <li><Link href="#work" className="hover:text-accent-start transition">Case Studies</Link></li>
-              <li><Link href="#process" className="hover:text-accent-start transition">Our Process</Link></li>
+              <li><Link href="services" className="hover:text-accent-start transition">Services</Link></li>
+              <li><Link href="work" className="hover:text-accent-start transition">Case Studies</Link></li>
+              <li><Link href="process" className="hover:text-accent-start transition">Our Process</Link></li>
               <li><Link href="#faq" className="hover:text-accent-start transition">FAQ</Link></li>
             </ul>
           </div>
@@ -40,9 +40,9 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-primary mb-6">Get in Touch</h4>
             <ul className="space-y-4 text-muted">
-              <li>New York, NY</li>
+              <li>Big Bear, CA</li>
               <li><a href="mailto:hello@kaiser3dweb.com" className="hover:text-accent-start">hello@kaiser3dweb.com</a></li>
-              <li>+1 (555) 123-4567</li>
+              <li>+1 (951) 441-9719</li>
             </ul>
           </div>
         </div>

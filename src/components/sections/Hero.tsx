@@ -60,14 +60,14 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="flex flex-wrap gap-4"
           >
-            <Link href="#contact" className="group relative px-8 py-4 bg-primary text-secondary rounded-full font-semibold overflow-hidden">
+            <Link href="contact" className="group relative px-8 py-4 bg-primary text-secondary rounded-full font-semibold overflow-hidden">
                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-accent-start to-accent-end opacity-100 group-hover:opacity-90 transition-opacity" />
                <span className="relative text-white flex items-center gap-2">
                  Start Project <ArrowRight size={18} />
                </span>
             </Link>
             
-            <Link href="#work" className="px-8 py-4 rounded-full border border-border hover:bg-secondary transition-colors font-medium text-primary">
+            <Link href="work" className="px-8 py-4 rounded-full border border-border hover:bg-secondary transition-colors font-medium text-primary">
               View Case Studies
             </Link>
           </motion.div>
