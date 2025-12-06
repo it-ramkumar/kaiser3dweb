@@ -15,7 +15,7 @@ const navLinks = [
   { name: "Process", href: "/process" },      // Anchor link to Home Page section
   { name: "Work", href: "/work" },             // Points to src/app/(main)/work/page.tsx
   { name: "Expertise", href: "/expertise" },  // Anchor link to Home Page section
-  { name: "FAQ", href: "/#faq" },              // Anchor link to Home Page section
+  { name: "FAQs", href: "/#faq" },              // Anchor link to Home Page section
 ];
 
 export default function Header() {
@@ -50,7 +50,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
            {/* Optional: Add your logo image here if you have one */}
-           <img src="/assets/logo.png" className="w-8 h-8" alt="Logo" />
+           <img src="/assets/logo.png" className="w-16 h-16" alt="Logo" />
            <span className="text-2xl font-bold tracking-tighter text-primary group-hover:opacity-80 transition-opacity">
              Kaiser<span className="accent-text">3DWeb</span>
            </span>

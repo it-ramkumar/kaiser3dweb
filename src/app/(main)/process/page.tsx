@@ -59,7 +59,7 @@ function PipelineVisuals() {
         <div className="relative max-w-5xl mx-auto min-h-[100vh]">
             {/* Layer 1: Wireframe */}
             <PipelineLayer 
-                img="/assets/7.png" 
+                img="/assets/img/step-one.jpg" 
                 label="Step 1: Wireframe & Blueprint" 
                 index={0} 
                 progress={scrollYProgress} 

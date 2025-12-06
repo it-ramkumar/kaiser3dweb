@@ -8,28 +8,32 @@ const steps = [
     title: "Discovery & Strategy",
     desc: "We dive deep into your brand DNA. We define KPIs, target audience, and the technical scope to ensure the 3D experience solves real business problems.",
     color: "from-blue-400 to-blue-600",
-    number: "01"
+    number: "01",
+    image: "/assets/img/step-one.jpg" // <--- Updated Image Path
   },
   {
     id: 2,
     title: "3D Asset Creation",
     desc: "Our artists craft low-poly, photorealistic models optimized for the web. We obsess over textures, lighting, and baking shadows to ensure 60fps performance.",
     color: "from-cyan-400 to-cyan-600",
-    number: "02"
+    number: "02",
+    image: "/assets/img/step-two.jpg" // <--- Updated Image Path
   },
   {
     id: 3,
     title: "Development & Integration",
     desc: "We build the interactive logic using React Three Fiber. We integrate the 3D scene seamlessly with your existing e-commerce backend (Shopify, WooCommerce).",
     color: "from-indigo-400 to-indigo-600",
-    number: "03"
+    number: "03",
+    image: "/assets/img/step-three.jpg" // <--- Updated Image Path
   },
   {
     id: 4,
     title: "Launch & Optimization",
     desc: "We deploy to the edge. We monitor performance metrics and user interaction heatmaps to refine the experience post-launch for maximum conversion.",
     color: "from-purple-400 to-purple-600",
-    number: "04"
+    number: "04",
+    image: "/assets/img/step-four.jpg" // <--- Updated Image Path
   },
 ];
 
@@ -96,12 +100,21 @@ function Card({ step, index, top, total, parentProgress }: any) {
       {/* Visual Side (Left) */}
       <div className={`w-full md:w-1/2 h-48 md:h-full bg-gradient-to-br ${step.color} p-8 flex items-center justify-center relative overflow-hidden group`}>
         <div className="absolute inset-0 bg-[url('/assets/grid-pattern.svg')] opacity-20 mix-blend-overlay" />
+        
+        {/* Large faded number in background */}
         <span className="text-[12rem] font-bold text-white opacity-20 absolute -bottom-20 -right-10 select-none group-hover:scale-110 transition-transform duration-700">
           {step.number}
         </span>
-        <div className="relative z-10 p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
-             {/* Replace with an actual icon or 3D image if you have one */}
-             <div className="text-6xl text-white font-bold">{step.number}</div>
+
+        {/* --- IMAGE CONTAINER --- */}
+        <div className="relative z-10 w-full h-full max-w-sm max-h-[300px] rounded-2xl overflow-hidden shadow-2xl border border-white/20 group-hover:-translate-y-2 transition-transform duration-500">
+           <img 
+             src={step.image} 
+             alt={step.title} 
+             className="w-full h-full object-cover"
+           />
+           {/* Optional: Glossy overlay on the image */}
+           <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent pointer-events-none" />
         </div>
       </div>
 
