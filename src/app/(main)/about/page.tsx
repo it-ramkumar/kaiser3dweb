@@ -2,8 +2,7 @@
 
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
-import { Sun, Moon } from 'lucide-react'; // Ensure you have lucide-react installed
-import Image from 'next/image';
+import { Sun, Moon } from 'lucide-react';
 
 // Stats Data
 const stats = [
@@ -39,34 +38,18 @@ const values = [
 ];
 
 export default function AboutPage() {
-    // 1. Theme Logic
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
-    // Prevent hydration mismatch
     useEffect(() => setMounted(true), []);
 
     return (
-        // 2. Main Wrapper: Uses "bg-primary" and "text-primary" variables we set up earlier
         <div className="min-h-screen bg-primary text-primary transition-colors duration-300">
             
-            {/* Temporary Theme Toggle for Testing (Top Right) */}
-            {/* {mounted && (
-                <div className="fixed top-24 right-6 z-50">
-                    <button
-                        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                        className="p-3 rounded-full bg-card border border-border shadow-lg text-muted hover:text-accent-start transition-all"
-                    >
-                        {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                    </button>
-                </div>
-            )} */}
 
             {/* --- HERO SECTION --- */}
             <section className="relative pt-32 pb-20 px-4 overflow-hidden">
-                {/* Abstract Background Element (Adjusted for Dark Mode) */}
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100/50 dark:bg-blue-900/20 rounded-full blur-3xl -z-10 translate-x-1/3 -translate-y-1/3" />
-                
                 <div className="max-w-6xl mx-auto text-center">
                     <span className="text-accent-start font-semibold tracking-wider text-sm uppercase mb-4 block">
                         About Kaiser 3D Web
@@ -84,7 +67,6 @@ export default function AboutPage() {
             </section>
 
             {/* --- STATS SECTION --- */}
-            {/* Updated Colors: Uses border-border and bg-secondary/50 for dark mode compatibility */}
             <section className="py-10 px-4 border-y border-border bg-secondary/50">
                 <div className="max-w-6xl mx-auto">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -102,16 +84,13 @@ export default function AboutPage() {
             <section className="py-24 px-4">
                 <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
                     <div className="relative">
-                        {/* Placeholder Image Container */}
                         <div className="aspect-square rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-800 dark:to-slate-700 relative overflow-hidden shadow-2xl">
                              <div className="absolute inset-0 flex items-center justify-center text-muted">
                                 <span className="font-medium">Company Image</span>
                              </div>
                         </div>
-                        {/* Decorative blob */}
                         <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-accent-start/20 rounded-full blur-2xl -z-10" />
                     </div>
-                    
                     <div>
                         <h2 className="text-3xl font-bold mb-6 text-primary">Our Mission</h2>
                         <div className="space-y-6 text-lg text-muted leading-relaxed">
@@ -126,8 +105,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* --- VALUES GRID (Dark Section) --- */}
-            {/* This section stays dark in both modes, but borders change subtly */}
+            {/* --- VALUES GRID --- */}
             <section className="py-24 px-4 bg-slate-900 dark:bg-black text-white">
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-16 md:text-center max-w-3xl mx-auto">
@@ -136,7 +114,6 @@ export default function AboutPage() {
                             We operate at the intersection of art and engineering. These core principles guide every line of code we write.
                         </p>
                     </div>
-
                     <div className="grid md:grid-cols-3 gap-6">
                         {values.map((item, i) => (
                             <div key={i} className="group p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-accent-start hover:bg-white/10 transition-all duration-300">
@@ -153,17 +130,16 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* --- TECH STACK STRIP --- */}
+            {/* --- TECH STACK STRIP (UPDATED WITH GLOW) --- */}
             <section className="py-20 px-4 border-b border-border bg-primary">
                 <div className="max-w-6xl mx-auto text-center">
                     <p className="text-muted font-medium mb-8 uppercase tracking-widest text-sm">Powered by modern technology</p>
                     <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                        {/* Text updated to use text-primary so it's visible in dark mode */}
-                        <span className="text-2xl font-bold text-primary">Next.js</span>
-                        <span className="text-2xl font-bold text-primary">Three.js</span>
-                        <span className="text-2xl font-bold text-primary">WebGL</span>
-                        <span className="text-2xl font-bold text-primary">React Three Fiber</span>
-                        <span className="text-2xl font-bold text-primary">Blender</span>
+                        <span className="text-2xl font-bold text-primary hover:text-accent-start hover:drop-shadow-[0_0_15px_rgba(37,99,235,0.6)] transition-all duration-300 cursor-default">Next.js</span>
+                        <span className="text-2xl font-bold text-primary hover:text-accent-start hover:drop-shadow-[0_0_15px_rgba(37,99,235,0.6)] transition-all duration-300 cursor-default">Three.js</span>
+                        <span className="text-2xl font-bold text-primary hover:text-accent-start hover:drop-shadow-[0_0_15px_rgba(37,99,235,0.6)] transition-all duration-300 cursor-default">WebGL</span>
+                        <span className="text-2xl font-bold text-primary hover:text-accent-start hover:drop-shadow-[0_0_15px_rgba(37,99,235,0.6)] transition-all duration-300 cursor-default">React Three Fiber</span>
+                        <span className="text-2xl font-bold text-primary hover:text-accent-start hover:drop-shadow-[0_0_15px_rgba(37,99,235,0.6)] transition-all duration-300 cursor-default">Blender</span>
                     </div>
                 </div>
             </section>
@@ -171,9 +147,7 @@ export default function AboutPage() {
             {/* --- CTA SECTION --- */}
             <section className="py-24 px-4">
                 <div className="max-w-4xl mx-auto text-center bg-gradient-to-r from-accent-start to-accent-end rounded-3xl p-12 text-white shadow-2xl relative overflow-hidden">
-                    {/* Background glow */}
                     <div className="absolute top-0 left-0 w-full h-full bg-white/10 blur-3xl scale-150 pointer-events-none" />
-                    
                     <div className="relative z-10">
                         <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Ready to start your project?</h2>
                         <p className="text-blue-50 text-lg mb-8 max-w-2xl mx-auto">
