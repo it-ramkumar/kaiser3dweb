@@ -3,29 +3,30 @@
 @tailwind utilities;
 
 :root {
-  /* LIGHT MODE */
-  --primary-color: #FFFFFF;         /* Background: White */
-  --secondary-color: #F8FAFC;       /* Light Slate */
-  --card-bg-color: rgba(255, 255, 255, 0.9);
-  --border-color: #E2E8F0;
+  /* === LIGHT MODE === */
+  --primary-color: #FFFFFF;         /* Main Background: Pure White */
+  --secondary-color: #F1F5F9;       /* Alt Background: Slate-100 */
+  --card-bg-color: #FFFFFF;         /* Cards: Solid White */
+  --border-color: #E2E8F0;          /* Slate-200 */
   
-  --text-color: #0F172A;            /* Text: Deep Dark Slate (Readable) */
-  --text-muted-color: #475569;      /* Muted: Medium Slate */
-  --input-bg-color: #F1F5F9;
+  --text-color: #0F172A;            /* Text: Slate-900 */
+  --text-muted-color: #475569;      /* Muted: Slate-600 */
+  --input-bg-color: #F8FAFC;        /* Slate-50 */
 
-  --accent-start: #2563EB;
-  --accent-end: #06B6D4;
+  /* Brand Colors */
+  --accent-start: #2563EB;          /* Blue-600 */
+  --accent-end: #06B6D4;            /* Cyan-500 */
 }
 
 .dark {
-  /* DARK MODE */
-  --primary-color: #020617;         /* Background: Deep Black */
-  --secondary-color: #0F172A;       /* Dark Slate */
-  --card-bg-color: rgba(30, 41, 59, 0.7); /* Translucent Slate */
-  --border-color: #1E293B;
+  /* === DARK MODE === */
+  --primary-color: #020617;         /* Background: Slate-950 */
+  --secondary-color: #0F172A;       /* Alt Background: Slate-900 */
+  --card-bg-color: rgba(30, 41, 59, 0.7); /* Cards: Translucent Slate */
+  --border-color: #1E293B;          /* Slate-800 */
 
-  --text-color: #F8FAFC;            /* Text: Bright White (High Contrast) */
-  --text-muted-color: #CBD5E1;      /* Muted: Light Gray (Readable) */
+  --text-color: #F8FAFC;            /* Text: White */
+  --text-muted-color: #CBD5E1;      /* Muted: Light Slate */
   --input-bg-color: #1E293B;
 }
 
@@ -40,10 +41,27 @@ body {
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-start to-accent-end;
   }
+  
   .accent-bg {
     @apply bg-gradient-to-r from-accent-start to-accent-end text-white;
   }
+  
+  /* UPDATED: High-End Card Style */
   .glass-card {
-    @apply bg-card backdrop-blur-md border border-border shadow-xl;
+    /* Base style */
+    @apply bg-card border border-border shadow-lg transition-all duration-300;
+    
+    /* Dark mode: Use backdrop blur and remove heavy shadow */
+    @apply dark:backdrop-blur-md dark:shadow-none;
+    
+    /* Light mode: Add lift effect and glow on hover */
+    /* REMOVED /30 opacity modifier to fix build error */
+    @apply hover:-translate-y-1 hover:shadow-xl hover:border-accent-start;
+  }
+  
+  /* Utility for Alternating Sections */
+  .section-alt {
+    /* REMOVED /50 opacity modifier to fix build error */
+    @apply bg-secondary border-y border-border;
   }
 }

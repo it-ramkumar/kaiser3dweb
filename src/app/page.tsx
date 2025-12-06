@@ -11,13 +11,23 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <TechStack />
+      <div className="section-alt">
+        <TechStack />
+      </div>
       <Services />
+      
+      <div className="section-alt">
       <Process />
+      </div>
+    
       <Work />
+     <div className="section-alt">
       <Testimonials /> {/* Adds social proof */}
+      </div>
       <FAQ />          {/* Adds objection handling */}
+      <div className="section-alt">
       <Contact />
+      </div>
     </>
   );
 }
