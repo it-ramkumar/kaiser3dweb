@@ -50,7 +50,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
            {/* Optional: Add your logo image here if you have one */}
-           {/* <img src="/assets/logo.png" className="w-8 h-8" alt="Logo" /> */}
+           <img src="/assets/logo.png" className="w-8 h-8" alt="Logo" />
            <span className="text-2xl font-bold tracking-tighter text-primary group-hover:opacity-80 transition-opacity">
              Kaiser<span className="accent-text">3DWeb</span>
            </span>
