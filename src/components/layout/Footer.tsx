@@ -10,9 +10,12 @@ export default function Footer() {
           
           {/* Brand Column */}
           <div className="md:col-span-2">
-            <Link href="/" className="text-2xl font-bold tracking-tighter mb-6 block text-white">
+            <div className="flex items-center gap-3 mb-6">
+              <img src="/assets/logo.png" alt="Kaiser3DWeb" className="h-10 w-10" />
+              <Link href="/" className="text-2xl font-bold tracking-tighter text-white">
               Kaiser<span className="text-accent-start">3DWeb</span>
-            </Link>
+              </Link>
+            </div>
             <p className="text-slate-400 max-w-sm mb-6">
               Transforming digital commerce with immersive, high-performance 3D and AR experiences. 
               We build the future of the web.

@@ -6,9 +6,9 @@ import { Providers } from "@/components/providers/Providers";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
-const poppins = Poppins({ 
+const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"] 
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -26,10 +26,9 @@ export default function RootLayout({
       <body className={poppins.className}>
         <ThemeProvider attribute="class">
           <Providers>
-
-          <Header />
-          <main>{children}</main>
-          <Footer />
+            <Header />
+            <main>{children}</main>
+            <Footer />
           </Providers>
         </ThemeProvider>
       </body>
