@@ -116,7 +116,7 @@ export default function Contact() {
                                 value={formData.clientName}
                                 onChange={handleChange}
                                 required
-                                placeholder="John Doe"
+                                placeholder="Name"
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
@@ -128,7 +128,7 @@ export default function Contact() {
                                 value={formData.companyName}
                                 onChange={handleChange}
                                 required
-                                placeholder="Acme Studios"
+                                placeholder="Company"
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
@@ -144,7 +144,7 @@ export default function Contact() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
-                                placeholder="john@company.com"
+                                placeholder="Email"
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
@@ -155,7 +155,7 @@ export default function Contact() {
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleChange}
-                                placeholder="+1 (555) 000-0000"
+                                placeholder="Phone"
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
