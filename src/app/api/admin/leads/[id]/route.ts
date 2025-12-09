@@ -35,6 +35,6 @@ export async function DELETE(
     await Lead.findByIdAndDelete(id);
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ error: "Delete failed" }, { status: 500 });
+    return NextResponse.json({ error: "Delete Failed" }, { status: 500 });
   }
 }
