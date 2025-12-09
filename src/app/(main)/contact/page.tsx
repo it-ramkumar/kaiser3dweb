@@ -2,7 +2,7 @@
 import { useState } from 'react';
 // Changed to named imports to fix the "No matching export for default" error
 import  Input  from '@/components/ui/Input';     
-import  Textarea  from '@/components/ui/TextArea'; 
+import  TextArea  from '@/components/ui/TextArea'; 
 import { Button } from '@/components/ui/Button';   
 
 // Enums matching your backend Schema
@@ -186,7 +186,7 @@ export default function ContactPage() {
                                 </div>
                             </div>
 
-                            <Textarea 
+                            <TextArea 
                                 // label="Project Details *" 
                                 name="projectDescription" 
                                 value={formData.projectDescription}

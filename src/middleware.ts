@@ -14,10 +14,9 @@ export function middleware(req: NextRequest) {
       const [user, pwd] = atob(authValue).split(':');
 
       // 3. CHECK CREDENTIALS HERE
-      // Replace 'admin' and 'password123' with your desired login
-      // Ideally, put these in your .env file: process.env.ADMIN_USER, process.env.ADMIN_PASS
-      if (user === 'admin' && pwd === 'kaiser3d2025') {
-        return NextResponse.next();
+      // Using environment variables for credentials
+      if (user === process.env.ADMIN_USER && pwd === process.env.ADMIN_PASS) {
+      return NextResponse.next();
       }
     }
 

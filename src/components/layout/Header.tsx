@@ -14,7 +14,8 @@ const navLinks = [
   { name: "Services", href: "/services" },     // Points to src/app/(main)/services/page.tsx
   { name: "Process", href: "/process" },      // Anchor link to Home Page section
   { name: "Work", href: "/work" },             // Points to src/app/(main)/work/page.tsx
-  { name: "Expertise", href: "/expertise" },  // Anchor link to Home Page section
+  { name: "Expertise", href: "/expertise" },
+  { name: "Insights", href: "/insights" },  // Anchor link to Home Page section
   { name: "FAQs", href: "/#faq" },              // Anchor link to Home Page section
 ];
 
